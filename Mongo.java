@@ -1,4 +1,4 @@
-
+public class Mongo{
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
@@ -25,3 +25,5 @@ public static void main(String args[]) {
 
   client.close(); //Closes the client server at the end so that it doesn't waste memory usage. 
 }
+
+};

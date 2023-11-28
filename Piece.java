@@ -1,4 +1,5 @@
 package Piece;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,17 @@ public class Piece {
     }
 
     public String toString() {
-        return pos_x + " " + pos_y;
+        return piece + " " + pos_x + " " + pos_y;
+    }
+
+    public boolean equals(Piece piece1) {
+        if ((this.piece == piece1.piece) && (this.pos_x == piece1.pos_x) && (this.pos_y == piece1.pos_y)) {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public boolean team() {
@@ -44,36 +55,17 @@ public class Piece {
         }
     }
 
-    public boolean isOccupied(Piece space) {
+    public boolean isOccupied() {
         // checks if a space is occupied
-        return space.piece != ' ';
+        return this.piece != ' ';
     }
 
-    public int[] returnDifference(int x, int y) {
-        // returns the difference between the piece and a point on the chessboard
-        int bigX, bigY, smallX, smallY;
-        int[] xy = new int[2];
+    public boolean kingsTooClose(Piece enemyKing) 
+    {
+        // returns the difference between two pieces on the chessboard
+        int distance = Math.max(Math.abs(enemyKing.pos_x - this.pos_x), Math.abs(enemyKing.pos_y - this.pos_y));
 
-        if (this.pos_x > x) {
-            bigX = pos_x;
-            smallX = x;
-        } else {
-            bigX = x;
-            smallX = pos_x;
-        }
-
-        if (this.pos_y > y) {
-            bigY = pos_y;
-            smallY = y;
-        } else {
-            bigY = y;
-            smallY = pos_y;
-        }
-
-        xy[0] = bigX - smallX;
-        xy[1] = bigY - smallY;
-
-        return xy;
+        return distance <= 1;
     }
 
     public List<Piece> checkX(char[][] board) { // returns all possible movements for X shaped movement (ie bishop,
@@ -102,7 +94,7 @@ public class Piece {
                 if ((x > -1) && (x < 8) && (y > -1) && (y < 8)) {
                     Piece space = new Piece(board, pos_x + i, pos_y + i);
 
-                    if (!isOccupied(space)) {
+                    if (!space.isOccupied()) {
                         allMovements.add(space);
                     } else if (space.team() != this.team()) {
                         allMovements.add(space);
@@ -121,7 +113,7 @@ public class Piece {
                 if ((x > -1) && (x < 8) && (y > -1) && (y < 8)) {
                     Piece space = new Piece(board, pos_x + i, pos_y - i);
 
-                    if (!isOccupied(space)) {
+                    if (!space.isOccupied()) {
                         allMovements.add(space);
                     } else if (space.team() != this.team()) {
                         allMovements.add(space);
@@ -139,7 +131,7 @@ public class Piece {
                 y = pos_y - i;
                 if ((x > -1) && (x < 8) && (y > -1) && (y < 8)) {
                     Piece space = new Piece(board, pos_x - i, pos_y - i);
-                    if (!isOccupied(space)) {
+                    if (!space.isOccupied()) {
                         allMovements.add(space);
                     } else if (space.team() != this.team()) {
                         allMovements.add(space);
@@ -158,7 +150,7 @@ public class Piece {
                 if ((x > -1) && (x < 8) && (y > -1) && (y < 8))
                 {
                 Piece space = new Piece(board, pos_x - i, pos_y + i);
-                if (!isOccupied(space)) {
+                if (!space.isOccupied()) {
                     allMovements.add(space);
                 } else if (space.team() != this.team()) {
                     allMovements.add(space);
@@ -170,6 +162,80 @@ public class Piece {
         }
         }
         return allMovements;
+    }
+
+    public List<Piece> checkKing(char[][] board, List<Piece> pieceList)
+    {
+        List<Piece> unCheckedList = new ArrayList<>();
+        List<Piece> movementList = new ArrayList<>();
+        boolean found = true;
+        if(((this.pos_x+1) > 0 && (this.pos_x+1) < 8) && ((this.pos_y+1) > 0 && (this.pos_y+1 < 8)))
+        {
+        Piece space1 = new Piece(board,this.pos_x+1,this.pos_y+1);
+        unCheckedList.add(space1);
+        }
+         if(((this.pos_x) > 0 && (this.pos_x) < 8) && ((this.pos_y+1) > 0 && (this.pos_y+1 < 8)))
+        {
+        Piece space2 = new Piece(board,this.pos_x,this.pos_y+1);
+        unCheckedList.add(space2);
+        }
+         if(((this.pos_x+1) > 0 && (this.pos_x+1) < 8) && ((this.pos_y) > 0 && (this.pos_y < 8)))
+        {
+        Piece space3 = new Piece(board,this.pos_x+1,this.pos_y);
+        unCheckedList.add(space3);
+        }
+         if(((this.pos_x+1) > 0 && (this.pos_x+1) < 8) && ((this.pos_y-1) > 0 && (this.pos_y-1 < 8)))
+        {
+        Piece space4 = new Piece(board,this.pos_x+1,this.pos_y-1);
+        unCheckedList.add(space4);
+        }
+         if(((this.pos_x-1) > 0 && (this.pos_x-1) < 8) && ((this.pos_y+1) > 0 && (this.pos_y+1 < 8)))
+        {
+        Piece space5 = new Piece(board,this.pos_x-1,this.pos_y+1);
+        unCheckedList.add(space5);
+        }
+         if(((this.pos_x-1) > 0 && (this.pos_x-1) < 8) && ((this.pos_y) > 0 && (this.pos_y < 8)))
+        {
+        Piece space6 = new Piece(board,this.pos_x-1,this.pos_y);
+        unCheckedList.add(space6);
+        }
+        if(((this.pos_x) > 0 && (this.pos_x) < 8) && ((this.pos_y-1) > 0 && (this.pos_y < 8-1)))
+        {
+        Piece space7 = new Piece(board,this.pos_x,this.pos_y-1);
+        unCheckedList.add(space7);
+        }
+        if(((this.pos_x-1) > 0 && (this.pos_x-1) < 8) && ((this.pos_y-1) > 0 && (this.pos_y-1 < 8)))
+        {
+        Piece space8 = new Piece(board,this.pos_x-1,this.pos_y-1);
+        unCheckedList.add(space8);
+        }
+
+        for(int i = 0; i < unCheckedList.size(); i++)
+        {
+            if((!unCheckedList.get(i).isOccupied()) || (unCheckedList.get(i).team() != this.team()))
+            {
+            for(int j = 0; j < pieceList.size(); j++)
+            {
+                List<Piece> enemyMoveList = new ArrayList<>();
+                enemyMoveList = pieceList.get(j).possibleMoves(board);
+
+                if(unCheckedList.get(i).inMovelist(enemyMoveList))
+                {
+                    found = true;
+                }
+            }
+
+            if (!found)
+            {
+                movementList.add(unCheckedList.get(i));
+
+            }
+        }
+        
+        }
+        //iterate through all Pieces in Piece list and check to see which of the King's possible moves are in those, if all of them ar
+
+        return movementList;
     }
 
     public List<Piece> checkCross(char[][] board) { // checks all possible movement spaces for a piece that moves in a
@@ -184,7 +250,7 @@ public class Piece {
             for (int i = 1; i <= topPathLength; i++) {
                 Piece space = new Piece(board, pos_x, pos_y + i);
 
-                if (!isOccupied(space)) {
+                if (!(space.isOccupied())) {
                     allMovements.add(space);
                 } else if (space.team() != this.team()) {
                     allMovements.add(space);
@@ -199,7 +265,7 @@ public class Piece {
             for (int i = 1; i <= rigPathLength; i++) {
                 Piece space = new Piece(board, pos_x + i, pos_y);
 
-                if (!isOccupied(space)) {
+                if (!space.isOccupied()) {
                     allMovements.add(space);
                 } else if (space.team() != this.team()) {
                     allMovements.add(space);
@@ -213,7 +279,7 @@ public class Piece {
         btmLoop: {
             for (int i = 1; i <= btmPathLength; i++) {
                 Piece space = new Piece(board, pos_x, pos_y - i);
-                if (!isOccupied(space)) {
+                if (!space.isOccupied()) {
                     allMovements.add(space);
                 } else if (space.team() != this.team()) {
                     allMovements.add(space);
@@ -221,13 +287,14 @@ public class Piece {
                 } else if (space.team() == this.team()) {
                     break btmLoop;
                 }
+                
             }
         }
         // checks left path
         leftLoop: {
             for (int i = 1; i <= lefPathLength; i++) {
                 Piece space = new Piece(board, pos_x - i, pos_y);
-                if (!isOccupied(space)) {
+                if (!space.isOccupied()) {
                     allMovements.add(space);
                 } else if (space.team() != this.team()) {
                     allMovements.add(space);
@@ -272,7 +339,7 @@ public class Piece {
             if ((x1 > -1) && (x1 < 8) && (y1 > -1) && (y1 < 8)) {
                 Piece move1 = new Piece(board, x1, y1);
 
-                if ((!isOccupied(move1) && (this.team() != move1.team()))) {
+                if ((!move1.isOccupied() && (this.team() != move1.team()))) {
                     allMovements.add(move1);
                 }
             }
@@ -280,7 +347,7 @@ public class Piece {
             if ((x2 > -1) && (x2 < 8) && (y2 > -1) && (y2 < 8)) {
                 Piece move2 = new Piece(board, x2, y2);
 
-                if ((!isOccupied(move2) && (this.team() != move2.team()))) {
+                if ((!move2.isOccupied() && (this.team() != move2.team()))) {
                     allMovements.add(move2);
                 }
             }
@@ -302,7 +369,7 @@ public class Piece {
         if ((this.pos_y + (direction * 1) < 8) && ((this.pos_y + (direction * 1) > -1))) {
             Piece move = new Piece(board, this.pos_x,
                     this.pos_y + (direction * 1));
-            if (!isOccupied(move)) {
+            if (!move.isOccupied()) {
                 moveList.add(move);
             }
         }
@@ -310,7 +377,7 @@ public class Piece {
         if ((this.pos_y + (direction * 2) < 8) && ((this.pos_y + (direction * 2) > -1))) {
             Piece moveInitial = new Piece(board, this.pos_x,
                     this.pos_y + (direction * 2));
-            if ((turnCount == 0) && (!isOccupied(moveInitial))) {
+            if ((turnCount == 0) && (!moveInitial.isOccupied())) {
                 moveList.add(moveInitial);
             }
         }
@@ -319,7 +386,7 @@ public class Piece {
 
                 Piece takeR = new Piece(board, this.pos_x + 1,
                         this.pos_y + (direction * 1));
-                if (isOccupied(takeR) && (this.team() != takeR.team())) {
+                if (takeR.isOccupied() && (this.team() != takeR.team())) {
                     moveList.add(takeR);
                 }
             }
@@ -330,7 +397,7 @@ public class Piece {
                 Piece takeL = new Piece(board, this.pos_x - 1,
                         this.pos_y + (direction * 1));
 
-                if (isOccupied(takeL) && (this.team() != takeL.team())) {
+                if (takeL.isOccupied() && (this.team() != takeL.team())) {
                     moveList.add(takeL);
                 }
             }
@@ -349,13 +416,55 @@ public class Piece {
         return false;
     }
 
+    public int findPiece(List<Piece> moveList) { // searches movelist to see if an attempted move is valid
+        for (int i = 0; i < moveList.size(); i++) {
+            if ((this.piece == moveList.get(i).piece) && (this.pos_x == moveList.get(i).pos_x)
+                    && (this.pos_y == moveList.get(i).pos_y)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+     public List<Piece> possibleMoves(char[][] board)
+    {
+        List<Piece> moveList = new ArrayList<>();
+
+        switch(this.piece)
+        {
+            case 'q':
+            case 'Q':
+            moveList = checkX(board);
+            moveList.addAll(checkCross(board));
+            break;
+            case 'b':
+            case 'B':
+            moveList = checkX(board);
+            break;
+            case 'n':
+            case 'N':
+            moveList = checkL(board);
+            break;
+            case 'r':
+            case 'R':
+            moveList = checkCross(board);
+            break;
+            case 'p':
+            case 'P':
+            moveList = checkPawn(board);
+            break;
+        }
+
+        return moveList;
+    } 
+
     public void printMovelist(List<Piece> moveList) {
         for (int i = 0; i < moveList.size(); i++) {
             System.out.println(moveList.get(i));
         }
     }
 
-    public void handleMovement(char[][] board, int x, int y) { // moves pieces across board and takes pieces
+    public void handleMovement(char[][] board, int x, int y, List<Piece> enemyPieces) { // moves pieces across board and takes pieces
         if (x > 7)
             x = 7;
         else if (x < 0)
@@ -368,75 +477,46 @@ public class Piece {
 
         Piece target = new Piece(board, x, y);
 
-        int[] diff = this.returnDifference(x, y);
-
         char tempPiece = this.piece;
 
         if ((64 < this.piece) && (this.piece < 92)) {
             tempPiece = Character.toLowerCase(this.piece);
         }
 
-        switch (tempPiece) {
-            case 'k': // king
-                if ((diff[0] == 1) && (diff[1] == 1)) {
+        if(target.piece != 'k' || target.piece != 'K')
+        {
+        if(tempPiece == 'k') {
+
+                if (target.inMovelist(this.checkKing(board,enemyPieces))) {
                     if (this.team() != target.team()) {
                         this.takePiece(board, x, y);
+                        if(target.isOccupied())
+                        {
+                            enemyPieces.remove(enemyPieces.indexOf(target));
+                        }
                     }
                 } else {
                     System.out.println("Invalid Move");
 
                 }
-                break;
-            case 'q': // queen
-                if (target.inMovelist(this.checkCross(board)) || target.inMovelist(this.checkX(board))) {
+            }
+            else 
+            {
+                System.out.println("Target Piece");
+                System.out.println(target);
+                if (target.inMovelist(this.possibleMoves(board))) {
                     this.takePiece(board, x, y);
+                    if(target.isOccupied())
+                    {
+                            enemyPieces.remove(target.findPiece(enemyPieces));
+                    }
                 } else {
                     System.out.println("Invalid Move");
-                    printMovelist(this.checkCross(board));
-                    printMovelist(this.checkX(board));
-
                 }
-                break;
-            case 'b': // bishop
-                if (target.inMovelist(this.checkX(board))) {
-                    this.takePiece(board, x, y);
-                } else {
-                    System.out.println("Invalid Move");
-                    printMovelist(this.checkX(board));
+            }
 
-                }
-                break;
-            case 'r': // rook
-                if (target.inMovelist(this.checkCross(board))) {
-                    this.takePiece(board, x, y);
-                } else {
-                    System.out.println("Invalid Move");
-                    printMovelist(this.checkPawn(board));
-
-                }
-                break;
-            case 'n': // knight
-                if (target.inMovelist(this.checkL(board))) {
-                    this.takePiece(board, x, y);
-                } else {
-                    System.out.println("Invalid Move");
-                    printMovelist(this.checkL(board));
-
-                }
-                break;
-            case 'p':// pawn
-
-                if (target.inMovelist(this.checkPawn(board))) {
-
-                    this.takePiece(board, x, y);
-                } else {
-                    System.out.print("Invalid Move");
-                    printMovelist(this.checkPawn(board));
-
-                }
-                break;
-        }
         this.turnCount++;
+        }
     }
 
     // getters and setters

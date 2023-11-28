@@ -1,7 +1,11 @@
 import java.io.*;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+
+import Piece.Piece;
+
 import java.util.HashMap;
-import Piece;
 
 public class test {
 
@@ -9,7 +13,7 @@ public class test {
     {
         for (int j = 7; j > -1; j--) {
             for (int i = 0; i < 8; i++) {
-                System.out.print(board[j][i]);
+                System.out.print(board[i][j] + " ");
             }
             System.out.println();
         }
@@ -24,35 +28,45 @@ public class test {
         Map<Character,Integer> xcoordinate = Map.of('A',0,'B',1,'C',2,'D',3,'E',4,'F',5,'G',6,'H',7);
         Map<Character,Integer> ycoordinate = Map.of('1',0,'2',1,'3',2,'4',3,'5',4,'6',5,'7',6,'8',7);
 
-        char[] bbackRow = {'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'};
-        char[] bfrontRow = {'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'};
-        char[] wbackRow = {'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'};
-        char[] wfrontRow = {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'};
-        char[] emptyRow = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
+        char[] rookCol = {'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r'};
+        char[] rookCol2 = {'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r'};
+        char[] knightCol = {'N', 'P', ' ', ' ', ' ', ' ', 'p', 'n'};
+        char[] knightCol2 = {'N', 'P', ' ', ' ', ' ', ' ', 'p', 'n'};
+        char[] bishopCol = {'B', 'P', ' ', ' ', ' ', ' ', 'p', 'b'};
+        char[] bishopCol2 = {'B', ' ', ' ', ' ', ' ', ' ', 'p', 'b'};
+        char[] queenCol = {'Q', ' ', ' ', ' ', ' ', ' ', ' ', 'q'};
+        char[] kingCol = {'K', 'P', ' ', ' ', ' ', ' ', 'p', 'k'};
+        char[][] board = {rookCol, knightCol, bishopCol, queenCol, kingCol, bishopCol2, knightCol2, rookCol2}; //fuck this thing
 
-        char[][] board = {wbackRow, wfrontRow, emptyRow, emptyRow, emptyRow, emptyRow, bfrontRow, bbackRow};
+        List<Piece> whitePieces = new ArrayList<>();
+        List<Piece> blackPieces = new ArrayList<>();
 
+        for(int i = 0; i < 8; i++) {
+            for(int j = 0; j < 8 ;j++) {
+                Piece Space = new Piece(board,i,j);
+                if (Space.team() && (Space.isOccupied()))
+                {
+                    whitePieces.add(Space);
+                }
+                else if (Space.isOccupied())
+                {
+                    blackPieces.add(Space);
+                }
+                }
+            }
+            System.out.println("Black Pieces");
+             for(int i = 0; i < blackPieces.size(); i++) {
+                System.out.println(blackPieces.get(i));
+            }
+        String userInput = null;
+        //System.out.println("Enter in the coordinates of the Piece you want to move in the format A1:");
+
+       
         drawBoard(board);
 
-    
-        String userInput;
-        System.out.println("Enter in the coordinates of the Piece you want to move in the format A1:");
-        try {
-            // existing code for reading user input
-        
-        userInput = buffer.readLine();
-        Piece chosenPiece = new Piece(board[ycoordinate.get(userInput.charAt(1))][xcoordinate.get(userInput.charAt(0))],ycoordinate.get(userInput.charAt(1)),xcoordinate.get(userInput.charAt(0)));
-        System.out.println("Enter in the coordinates of the place you want to move in the format A1:");
-       userInput = buffer.readLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        chosenPiece.handleMovement(board,ycoordinate.get(userInput.charAt(1)),xcoordinate.get(userInput.charAt(0)));
+        Piece test = new Piece(board,4,0);
+        test.handleMovement(board,3,1,blackPieces);
         drawBoard(board);
-
-        
-
-        
-
+       
     }
 }

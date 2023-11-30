@@ -193,7 +193,17 @@ public class Piece {
 
                     if (unCheckedList.get(i).inMovelist(enemyMoveList)) // if its in there, then NO
                     {
-                        found = true;
+                        if(enemyMoveList.get(j).piece == 'k' || enemyMoveList.get(j).piece == 'K') //if checking the enemy king, check to see if the kings are far enough away
+                        {
+                            if(unCheckedList.get(i).kingsTooClose(enemyMoveList.get(j)))
+                            {
+                                found = true;
+                            }
+                        }
+                        else
+                        {
+                            found = true;
+                        }
                     }
                 }
 
@@ -450,7 +460,8 @@ public class Piece {
         Piece target = new Piece(board, x, y);
 
         char tempPiece = this.piece;
-
+    if(target.piece != 'k' && target.piece != 'K' )
+    {
         if ((64 < this.piece) && (this.piece < 92)) {
             tempPiece = Character.toLowerCase(this.piece);
         }
@@ -480,72 +491,10 @@ public class Piece {
                     return;
                 }
             }
+        }
             this.turnCount++; //increments turn per movement
     }
 
-    public boolean inCheck(char[][] board){
-        //king is in check if its currently in the line of sight of a piece
-        //return true indicates that king is currently in check!
-        //please only pass the king piece istg
-
-        List<Piece> moveList = new ArrayList<>();
-        moveList = possibleMoves(board);
-
-        for(int i = 0; i<moveList.size(); i++){
-            if (this.piece == (moveList.get(i)).piece) {
-                return true;
-            }
-        }
-            return false;
-    }
-
-// public int gameState(char[][] board, List<Piece> enemyPieces){
-
-//             List<Piece> allMoves = new ArrayList<>();
-//             List<Piece> myMoves = new ArrayList<>();
-//             char[][] tempboard = new char[8][8];
-//             boolean tempbool = inCheck(board);
-
-//             allMoves = possibleMoves(board);
-//             allMoves.addAll(checkKing(board, allMoves));
-
-//             //movelist contains moves for both team and enemy pieces. 
-//             //first order of business: make movelist of own team pieces
-//            //myMoves is a list of pieces that contains only moves that can be done by whoevers turn it is
-
-//             for(int i = 0; i<allMoves.size(); i++){
-//                 if(allMoves.get(i).team() == this.team()){
-//                     myMoves.add(allMoves.get(i));
-//                 }
-//             }
-
-//             //once its made, do the following
-//                 //i should do a for loop, that iterates through the movelist, and simulates all of the movements 
-//                     //of the non-enemy pieces
-//                 //if inCheck == 1 for ALL possible non-enemy movements, AND i have NO LEGAL MOVES. checkmate, done. return 1
-//                 //if inCheck == 0 for ALL possible non-enemy movements, AND i have LEGAL MOVES. no checkmate, game on. return 0
-//                 //if inCheck == 0 for ALL possible non-enemy movements, AND i have NO LEGAL MOVES. stalemate, done. return -1
-
-//             for(int i = 0; i<myMoves.size(); i++){
-
-//                 for(int j = 0; i<8; i++){
-//                     for(int k = 0; j<8; j++){
-//                         tempboard[j][k] = board[j][k];
-//                     }
-//                 }
-
-//                 Piece temp_kingPiece = new Piece(tempboard, this.pos_x, this.pos_y);
-//                 handleMovement(tempboard, temp_kingPiece.pos_x, temp_kingPiece.pos_y, enemyPieces);
-
-
-
-
-//                 }
-
-
-
-
-//             }
     // getters and setters
     public int getPosX() {
         return pos_x;

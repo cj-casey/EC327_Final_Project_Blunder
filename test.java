@@ -33,8 +33,8 @@ public class test {
         char[] knightCol = {'N', 'P', ' ', ' ', ' ', ' ', 'p', 'n'};
         char[] knightCol2 = {'N', 'P', ' ', ' ', ' ', ' ', 'p', 'n'};
         char[] bishopCol = {'B', 'P', ' ', ' ', ' ', ' ', 'p', 'b'};
-        char[] bishopCol2 = {'B', ' ', ' ', ' ', ' ', ' ', 'p', 'b'};
-        char[] queenCol = {'Q', ' ', ' ', ' ', ' ', ' ', ' ', 'q'};
+        char[] bishopCol2 = {'B', 'P', ' ', ' ', ' ', ' ', 'p', 'b'};
+        char[] queenCol = {'Q', 'P', ' ', ' ', ' ', ' ', 'p', 'q'};
         char[] kingCol = {'K', 'P', ' ', ' ', ' ', ' ', 'p', 'k'};
         char[][] board = {rookCol, knightCol, bishopCol, queenCol, kingCol, bishopCol2, knightCol2, rookCol2}; //fuck this thing
 
@@ -54,18 +54,18 @@ public class test {
                 }
                 }
             }
-            System.out.println("Black Pieces");
+           /* System.out.println("Black Pieces");
              for(int i = 0; i < blackPieces.size(); i++) {
                 System.out.println(blackPieces.get(i));
-            }
-        String userInput = null;
+            } */
+       // String userInput = null;
         //System.out.println("Enter in the coordinates of the Piece you want to move in the format A1:");
 
        
         drawBoard(board);
 
         Piece test = new Piece(board,4,0);
-        test.handleMovement(board,3,1,blackPieces);
+        test.handleMovement(board,5,1,blackPieces);
         drawBoard(board);
        
     }

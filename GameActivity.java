@@ -1,0 +1,254 @@
+package com.example.onechess;
+
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.ImageView;
+
+
+import com.example.onechess.Piece;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class GameActivity extends AppCompatActivity {
+
+   private char[][] board = { //board initialization
+            {'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r'},
+            {'N', 'P', ' ', ' ', ' ', ' ', 'p', 'n'},
+            {'B', 'P', ' ', ' ', ' ', ' ', 'p', 'b'},
+            {'Q', 'P', ' ', ' ', ' ', ' ', 'p', 'q'},
+            {'K', ' ', ' ', ' ', ' ', ' ', 'p', 'k'},
+            {'B', 'P', ' ', ' ', ' ', ' ', 'p', 'b'},
+            {'N', 'P', ' ', ' ', ' ', ' ', 'p', 'n'},
+            {'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r'}};
+   private int start_x = -1,start_y = -1,end_x = -1,end_y = -1; //placeholder values for movement
+    //declaration of white and black pieces
+    List<Piece> whitePieces = new ArrayList<>();
+    List<Piece> blackPieces = new ArrayList<>();
+
+
+    protected void onCreate(Bundle savedInstanceState) {
+        //run on start of activity
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_game);
+        //initialize grid and pieces
+        initializeGrid();
+        initializePieceList();
+        //creates shop and leaderboard buttons
+        Button shopButton = findViewById(R.id.shopButton);
+        shopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Start the ChessSetupActivity
+                Intent intent = new Intent(GameActivity.this, ShopActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button leaderboardButton = findViewById(R.id.leaderboardButton);
+        leaderboardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Start the ChessSetupActivity
+                Intent intent = new Intent(GameActivity.this, LeaderboardActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void initializeGrid() {
+        //creates table layout
+        TableLayout tableLayout = findViewById(R.id.imageGrid);
+        //creates array of images to iterate through
+        ImageView[][] pieceViews = new ImageView[8][8];
+
+        for (int i = 7; i > -1; i--) {
+            //defines a new row, per row
+            TableRow tableRow = new TableRow(this);
+            //xml garbo that makes it look nice
+            TableRow.LayoutParams rowParams = new TableRow.LayoutParams(
+                    TableRow.LayoutParams.WRAP_CONTENT,
+                    TableRow.LayoutParams.WRAP_CONTENT);
+            tableRow.setLayoutParams(rowParams);
+            for (int j = 0; j < 8; j++) {
+                //grabs the char on the board for drawing correct image
+                char piece = board[j][i];
+
+                // Create an ImageView
+                ImageView imageView = new ImageView(this);
+                pieceViews[i][j] = imageView;
+                // Set image resource based on the char value
+                setImageResource(imageView, piece);
+
+                // set layout parameters for the ImageView
+                TableRow.LayoutParams params = new TableRow.LayoutParams(
+                        TableRow.LayoutParams.WRAP_CONTENT,
+                        TableRow.LayoutParams.WRAP_CONTENT);
+                params.setMargins(10, 14, 14, 10);  //spacing between pieces
+
+                // Add the ImageView to the TableRow
+                tableRow.addView(imageView, params); //adds it to screen
+
+            }
+            // Add the TableRow to the TableLayout
+            tableLayout.addView(tableRow);
+        }
+        //creates click listeners for every image, and calls the handlePieceClick function
+        for (int i = 7; i > -1; i--) {
+            for (int j = 0; j < 8; j++) {
+                final int x = j;
+                final int y = i;
+
+                pieceViews[i][j].setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Handle the click event
+                        System.out.println("Updated:" + x + y);
+                        handlePieceClick(x, y);
+                    }
+                });
+            }
+        }
+    }
+
+    public void updateGrid() {
+        //this function is identical to initialize grid, except it overrites the existing grid
+        TableLayout tableLayout = findViewById(R.id.imageGrid);
+        System.out.println("Updated");
+        // Clear the existing TableLayout (remove all existing ImageViews)
+        tableLayout.removeAllViews();
+
+        ImageView[][] pieceViews = new ImageView[8][8];
+
+        for (int i = 7; i > -1; i--) {
+            TableRow tableRow = new TableRow(this);
+            TableRow.LayoutParams rowParams = new TableRow.LayoutParams(
+                    TableRow.LayoutParams.WRAP_CONTENT,
+                    TableRow.LayoutParams.WRAP_CONTENT);
+            tableRow.setLayoutParams(rowParams);
+            for (int j = 0; j < 8; j++) {
+                char piece = board[j][i];
+
+                // Create an ImageView
+                ImageView imageView = new ImageView(this);
+                pieceViews[i][j] = imageView;
+                // Set image resource based on the char value
+                setImageResource(imageView, piece);
+
+                // Optionally, set layout parameters for the ImageView
+                TableRow.LayoutParams params = new TableRow.LayoutParams(
+                        TableRow.LayoutParams.WRAP_CONTENT,
+                        TableRow.LayoutParams.WRAP_CONTENT);
+                params.setMargins(10, 14, 14, 10);  // Adjust margins as needed
+
+                // Add the ImageView to the TableRow
+                tableRow.addView(imageView, params);
+
+            }
+
+            // Add the TableRow to the TableLayout
+            tableLayout.addView(tableRow);
+        }
+    }
+
+    private void initializePieceList()
+    { //self-explanatory
+        for(int i = 0; i < 8; i++) {
+            for(int j = 0; j < 8 ;j++) {
+                Piece Space = new Piece(board,i,j);
+                if (Space.team() && (Space.isOccupied()))
+                {
+                    whitePieces.add(Space);
+                }
+                else if (Space.isOccupied())
+                {
+                    blackPieces.add(Space);
+                }
+            }
+        }
+    }
+        private void handlePieceClick(int x, int y) {
+            // if the start was not chosen, set the values
+            if(start_x == -1)
+            {
+               start_x = x;
+               start_y = y;
+            }
+            else
+            { //if start was chosen, pick end values and call the handleMovement function
+                end_x = x;
+                end_y = y;
+
+                Piece chosenPiece = new Piece(board,start_x,start_y);
+                if(chosenPiece.team()) {
+                    chosenPiece.handleMovement(board, end_x, end_y,blackPieces);
+                }
+                else
+                {
+                    chosenPiece.handleMovement(board, end_x, end_y,whitePieces);
+                }
+                //move is over, reset values, update grid
+                start_x = -1;
+                start_y = -1;
+                updateGrid();
+            }
+
+            // Perform actions based on the clicked piece
+        }
+
+    private void setImageResource(ImageView imageView, char value) {
+        // Set image resource based on the char value
+        // You need to define the logic for mapping char values to image resources
+        // For example, you can use a switch statement or a map
+        switch (value) {
+            case 'k':
+                imageView.setImageResource(R.drawable.b_king);
+                return;
+            case 'K':
+                imageView.setImageResource(R.drawable.w_king);
+                return;
+            case 'q':
+                imageView.setImageResource(R.drawable.b_queen);
+                return;
+            case 'Q':
+                imageView.setImageResource(R.drawable.w_queen);
+                return;
+            case 'b':
+                imageView.setImageResource(R.drawable.b_bishop);
+                return;
+            case 'B':
+                imageView.setImageResource(R.drawable.w_bishop);
+                return;
+            case 'n':
+                imageView.setImageResource(R.drawable.b_knight);
+                return;
+            case 'N':
+                imageView.setImageResource(R.drawable.w_knight);
+                return;
+            case 'r':
+                imageView.setImageResource(R.drawable.b_rook);
+                return;
+
+            case 'R':
+                imageView.setImageResource(R.drawable.w_rook);
+                return;
+
+            case 'p':
+                imageView.setImageResource(R.drawable.b_pawn);
+                return;
+            case 'P':
+                imageView.setImageResource(R.drawable.w_pawn);
+                return;
+            case ' ':
+                imageView.setImageResource(R.drawable.blank);
+        }
+    }
+}
+

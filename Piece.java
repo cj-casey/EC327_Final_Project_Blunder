@@ -491,61 +491,128 @@ public class Piece {
             }
         }
             this.turnCount++; //increments turn per movement
-    
-
-         public boolean inCheck(char[][] board){
-        //king is in check if its currently in the line of sight of a piece
-        //return true indicates that king is currently in check!
-        //please only pass the king piece istg
-
-        List<Piece> moveList = new ArrayList<>();
-        moveList = possibleMoves(board);
-
-        for(int i = 0; i<moveList.size(); i++){
-            if (this.piece == (moveList.get(i)).piece) {
-                return true;
-            }
-        }
-            return false;
     }
 
-// public int gameState(char[][] board, List<Piece> enemyPieces){
-
-//             List<Piece> allMoves = new ArrayList<>();
-//             List<Piece> myMoves = new ArrayList<>();
-//             char[][] tempboard = new char[8][8];
-//             boolean tempbool = inCheck(board);
-
-//             allMoves = possibleMoves(board);
-//             allMoves.addAll(checkKing(board, allMoves));
-
-//             //movelist contains moves for both team and enemy pieces. 
-//             //first order of business: make movelist of own team pieces
-//            //myMoves is a list of pieces that contains only moves that can be done by whoevers turn it is
-
-//             for(int i = 0; i<allMoves.size(); i++){
-//                 if(allMoves.get(i).team() == this.team()){
-//                     myMoves.add(allMoves.get(i));
+//     public List<Piece> findKings(char[][] board){
+        
+//         List<Piece> kings = new ArrayList<>();
+//         Piece blackKing = new Piece;
+//         Piece whiteKing = new Piece;
+        
+//         for(int i = 0; i<8; i++){
+//             for(int j = 0; j<8; j++){
+//                     if(board[i][j] == 'k'){
+//                     Piece blackKing = Piece(board,i,j);        
+//                     }
+//                     else if(board[i][j] == 'K'){
+//                     Piece whiteKing = Piece(board,i,j);
+//                     }
+                
 //                 }
+            
 //             }
 
+//         kings.addAll(blackKing);
+//         kings.addAll(whiteKing);
+
+//         return kings;
+        
+//         }
+        
+
+//     public int inCheck(char[][] board, list<Piece> whitePieces, list<Piece> blackPieces){
+//         //function creates a list of all the possible moves on the board, and if the king is a target in that movelist
+//         //inCheck == 1 if white in check
+//         //inCheck == -1 if black in check
+//         //inCheck == 0 if no check
+        
+//         List<Piece> moveList = new ArrayList<>();
+//         List<Piece> kings = new ArrayList<>();
+//         kings = findKings(board);
+
+//         movelist.addAll(kings.get(0).checkKing(board, blackPieces);
+//         movelist.addAll(kings.get(1).checkKing(board, whitePieces);
+        
+//         for(int i = 0; i<whitePieces.size(); i++){
+//             moveList.addAll(whitePieces.get(i).possibleMoves(board));
+//         }
+//         for(int i = 0; i<blackPieces.size(); i++){
+//             movelist.addAll(blackPieces.get(i).possibleMoves(board));
+//         }
+        
+//             if (kings.get(0).findPiece(moveList) >= 0){  
+//                 return -1;
+//             }   
+//             else if (kings.get(1).findPiece(moveList) >= 0){
+//                 return 1;
+//             }
+//         }
+//         return 0;
+//     }
+// public int gameState(char[][] board, List<Piece> whitePieces, List<Piece> blackPieces){
+       
+//        List<Piece> kings = new ArrayList<>();
+//        kings = findKings(board);
+    
+//        List<Piece> blackMoves = new ArrayList<>();
+//        List<Piece> whiteMoves = new ArrayList<>();
+//        char[][] tempboard = new char[8][8];
+       
+//     for(int i = 0; i<8; i++){
+//         for(int j = 0; j<8; j++){
+//             tempboard[i][j] = board[i][j];
+//         }
+//     }
+
+//         Piece tempblackKing = new Piece(tempboard, kings.get(0).getpos_x(0), kings.get(0).getpos_y(0));
+//         Piece tempwhiteKing = new Piece(tempboard, kings.get(1).getpos_x(1), kings.get(1).getpos_y(1));
+    
+//        switch(inCheck(board, whitePieces, blackPieces)){
+//            case 0:
+//                for(int i = 0; i<whitePieces.size(); i++){
+//                   whiteMoves.addAll(whitePieces.get(i).possibleMoves(board)); 
+//                }
+//                   if(whiteMoves.size() == 0){
+//                     return -1; 
+//                   }
+//                for(int j = 0; j<blackPieces.size(); j++){
+//                    blackMoves.addAll(blackPieces.get(j).possibleMoves(board));
+//                }
+//                    if(blackMoves.size() == 0){
+//                     return -1;
+//                    }  
+//                return 0;
+               
+//                break;
+           
+//            case -1:
+//                for(int j = 0; j<blackPieces.size(); j++){
+//                    blackMoves.addAll(blackPieces.get(j).possibleMoves(board));
+//                }
+
+//                for(int i = 0; i<blackMoves.size(); i++){
+    
+//                }
+
+               
+//                break;
+           
+//            case 1;
+               
+//                break;
+//        }
+    
+
+    
 //             //once its made, do the following
-//                 //i should do a for loop, that iterates through the movelist, and simulates all of the movements 
-//                     //of the non-enemy pieces
-//                 //if inCheck == 1 for ALL possible non-enemy movements, AND i have NO LEGAL MOVES. checkmate, done. return 1
-//                 //if inCheck == 0 for ALL possible non-enemy movements, AND i have LEGAL MOVES. no checkmate, game on. return 0
-//                 //if inCheck == 0 for ALL possible non-enemy movements, AND i have NO LEGAL MOVES. stalemate, done. return -1
+//                 //i should do a for loop, that iterates through the movelist, and simulates all of the movements of black/white pieces
+//                 //if white is in check (inCheck == 1) for ALL possible white movements. checkmate, Black wins (bot) done. return 2;
+//                 //if black is in check (inCheck == -1) for All possible black movements. checkmate, White wins (player wins). done. return 1;
+//                 //if inCheck == 0 and (if player AND bot both have LEGAL MOVES). no checkmate, game on. return 0
+//                 //if inCheck == 0 and either movelist is empty. stalemate, done. return -1
 
-//             for(int i = 0; i<myMoves.size(); i++){
-
-//                 for(int j = 0; i<8; i++){
-//                     for(int k = 0; j<8; j++){
-//                         tempboard[j][k] = board[j][k];
-//                     }
-//                 }
-
-//                 Piece temp_kingPiece = new Piece(tempboard, this.pos_x, this.pos_y);
-//                 handleMovement(tempboard, temp_kingPiece.pos_x, temp_kingPiece.pos_y, enemyPieces);
+//                 // Piece temp_kingPiece = new Piece(tempboard, this.pos_x, this.pos_y);
+//                 // handleMovement(tempboard, temp_kingPiece.pos_x, temp_kingPiece.pos_y, enemyPieces);
 
 
 

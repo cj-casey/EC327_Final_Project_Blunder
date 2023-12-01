@@ -1,4 +1,6 @@
 public class Mongo{
+
+
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
@@ -7,6 +9,8 @@ import org.bson.Document;
 import org.bson.BsonDocument;
 
 public static void main(String args[]) {
+
+  try{
   // Set system properties via commandline or programmatically
   System.setProperty("javax.net.ssl.keyStore", "leaderboarddata");
   System.setProperty("javax.net.ssl.keyStorePassword", "BogiBogi12378&*#");
@@ -23,7 +27,22 @@ public static void main(String args[]) {
   BsonDocument filter = new BsonDocument();
   collection.countDocuments(filter);
 
-  client.close(); //Closes the client server at the end so that it doesn't waste memory usage. 
+  }
+
+  catch(Exception e){ //If it fails to reach the database, it won't thrown an error and crash the program. --> Instead, it will just not do anything, and will throw an error to the console.
+      System.out.Println("Failed to reach MongoDB Database");
+      e.printStackTrace();
+  }
+
+ 
+
+  finally{
+    if (mongoClient != null){
+      mongoClient.close();
+      system.out.println("MongoDB connection closed."); //If the connection is successful, it will close the connection.
+    }
+  }
+
 }
 
-};
+}

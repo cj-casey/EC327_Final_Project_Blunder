@@ -9,7 +9,6 @@ public class Piece {
     private char piece;
     private int pos_x;
     private int pos_y;
-
     private int turnCount;
 
     public Piece(char[][] board, int x, int y) {
@@ -40,17 +39,11 @@ public class Piece {
     public void takePiece(char[][] board, int x, int y) {
         // moves pieces across board and updates their xy
 
-        Piece takenPiece = new Piece(board, x, y);
-        boolean sameTeam = (this.team() == takenPiece.team());
-        // piece1.team() == piece2.team()
-        if (!sameTeam) { // sets char of new space to the moving piece changes pos values and sets old
-                         // spot to " "
-            board[x][y] = this.piece;
-
-            board[this.pos_x][this.pos_y] = ' ';
-            this.pos_x = x;
-            this.pos_y = y;
-        }
+        board[x][y] = this.piece;
+        board[this.pos_x][this.pos_y] = ' ';
+        this.pos_x = x;
+        this.pos_y = y;
+        
     }
 
     public boolean isOccupied() {
@@ -164,7 +157,7 @@ public class Piece {
         List<Piece> unCheckedList = new ArrayList<>();
         List<Piece> movementList = new ArrayList<>();
         boolean found = false;
-
+        
         for (int i = -1; i < 2; i++) {
             for (int j = -1; j < 2; j++) {
                 if (!(i == 0 && j == 0)) // doesnt check itself
@@ -185,11 +178,13 @@ public class Piece {
             if (!(unCheckedList.get(i).isOccupied()) || (unCheckedList.get(i).team() != this.team())) // if its not occupied or the opposite team
                                                                                                      
             {
+                //board[unCheckedList.get(i).pos_x][unCheckedList.get(i).pos_x] = this.piece; //place temporary king
                 for (int j = 0; j < pieceList.size(); j++) // checks if possible moves are currently under attack and
                                                            // thus not valid
                 {
                     List<Piece> enemyMoveList = new ArrayList<>();
-                    enemyMoveList = pieceList.get(j).possibleMoves(board);
+                    enemyMoveList = pieceList.get(j).possibleMoves(board,this.team());
+
 
                     if (unCheckedList.get(i).inMovelist(enemyMoveList)) // if its in there, then NO
                     {
@@ -206,7 +201,7 @@ public class Piece {
                         }
                     }
                 }
-
+               // board[unCheckedList.get(i).pos_x][unCheckedList.get(i).pos_x] = unCheckedList.get(i).piece;
                 if (!found) {
                     movementList.add(unCheckedList.get(i)); // adds happy valid move to list
                 }
@@ -289,54 +284,53 @@ public class Piece {
 
     public List<Piece> checkL(char[][] board) { // checks all possible movements for pieces that move in an L shape
         List<Piece> allMovements = new ArrayList<>();
-        int longue = 2, shorte = 1, xmod = 1, ymod = 1;
+        int longue = 2, shorte = 1, smod = -1, lmod = -1;
         // goes around all 8 possibilites
         for (int i = 0; i < 4; i++) {
             switch (i) {
                 case 1:
-                    xmod = 1;
-                    ymod = -1;
+                    smod = -1;
+                    lmod = 1;
                     break;
                 case 2:
-                    xmod = -1;
-                    ymod = -1;
-
+                    smod = 1;
+                    lmod = -1;
                     break;
                 case 3:
-                    xmod = -1;
-                    ymod = 1;
+                    smod = 1;
+                    lmod = 1;
                     break;
             }
 
             // creates x and y values for the two moves with alternating short and long
             // sides
-            int x1 = (pos_x + (longue * xmod));
-            int x2 = (pos_x + (shorte * xmod));
-            int y1 = (pos_x + (longue * ymod));
-            int y2 = (pos_x + (shorte * ymod));
+            int lindex = (pos_x + (longue * lmod));
+            int sindex = (pos_x + (shorte * smod));
 
+            int lindey = (pos_y + (longue * lmod));
+            int sindey = (pos_y + (shorte * smod));
+        
             // if within bounds it adds them to the list
-            if ((x1 > -1) && (x1 < 8) && (y1 > -1) && (y1 < 8)) {
-                Piece move1 = new Piece(board, x1, y1);
+            if ((lindex > -1) && (lindex < 8) && (sindey > -1) && (sindey < 8)) {
+                Piece move1 = new Piece(board, lindex, sindey);
 
                 if ((!move1.isOccupied() && (this.team() != move1.team()))) {
                     allMovements.add(move1);
                 }
             }
 
-            if ((x2 > -1) && (x2 < 8) && (y2 > -1) && (y2 < 8)) {
-                Piece move2 = new Piece(board, x2, y2);
+            if ((sindex > -1) && (sindex < 8) && (lindey > -1) && (lindey < 8)) {
+                Piece move2 = new Piece(board, sindex, lindey);
 
                 if ((!move2.isOccupied() && (this.team() != move2.team()))) {
                     allMovements.add(move2);
                 }
             }
         }
-
         return allMovements;
     }
 
-    public List<Piece> checkPawn(char[][] board) { // checks all possible movements for pawns
+    public List<Piece> checkPawn(char[][] board, boolean team) { // checks all possible movements for pawns
         int direction;
         List<Piece> moveList = new ArrayList<>();
 
@@ -345,6 +339,8 @@ public class Piece {
         } else {
             direction = -1;
         }
+
+        if(this.team() == team) {
 
         if ((this.pos_y + (direction * 1) < 8) && ((this.pos_y + (direction * 1) > -1))) {
             Piece move = new Piece(board, this.pos_x,
@@ -361,6 +357,9 @@ public class Piece {
                 moveList.add(moveInitial);
             }
         }
+    }
+
+        
         if ((this.pos_y + (direction * 1) < 8) && ((this.pos_y + (direction * 1) > -1))) { //taking enemy piece
             if ((this.pos_x + 1 < 8) && (this.pos_x + 1 > -1)) {
 
@@ -382,6 +381,7 @@ public class Piece {
                 }
             }
         }
+        
 
         return moveList;
     }
@@ -406,7 +406,7 @@ public class Piece {
         return -1;
     }
 
-    public List<Piece> possibleMoves(char[][] board) { //generic possible moves function
+    public List<Piece> possibleMoves(char[][] board, boolean team_turn) { //generic possible moves function
         List<Piece> moveList = new ArrayList<>();
 
         switch (this.piece) {
@@ -429,7 +429,7 @@ public class Piece {
                 break;
             case 'p':
             case 'P':
-                moveList = checkPawn(board);
+                moveList = checkPawn(board,team_turn);
                 break;
         }
 
@@ -442,7 +442,9 @@ public class Piece {
         }
     }
 
-    public void handleMovement(char[][] board, int x, int y, List<Piece> enemyPieces) { // moves pieces across board and takes pieces
+    public void handleMovement(char[][] board, int x, int y, List<Piece> enemyPieces) { // moves pieces across board and
+                                                                                        // takes pieces
+
         //prevents user/bot from picking off the board
         if (x > 7)
             x = 7;
@@ -458,7 +460,7 @@ public class Piece {
         Piece target = new Piece(board, x, y);
 
         char tempPiece = this.piece;
-    if(target.piece != 'k' && target.piece != 'K' )
+    if(target.piece != 'k' && target.piece != 'K' && this.piece != ' ')
     {
         if ((64 < this.piece) && (this.piece < 92)) {
             tempPiece = Character.toLowerCase(this.piece);
@@ -479,150 +481,24 @@ public class Piece {
             } else { //generic pieces
                 System.out.println("Target Piece");
                 System.out.println(target);
-                if (target.inMovelist(this.possibleMoves(board))) {
+                System.out.println("");
+
+                if (target.inMovelist(this.possibleMoves(board,this.team()))) {
+                    System.out.println("Possible Moves");
+                    printMovelist(this.possibleMoves(board,this.team()));
                     this.takePiece(board, x, y);
                     if (target.isOccupied()) {
                         enemyPieces.remove(target.findPiece(enemyPieces));
                     }
                 } else {
                     System.out.println("Invalid Move");
+                    printMovelist(this.possibleMoves(board,this.team()));
                     return;
                 }
             }
         }
             this.turnCount++; //increments turn per movement
     }
-
-//     public List<Piece> findKings(char[][] board){
-        
-//         List<Piece> kings = new ArrayList<>();
-//         Piece blackKing = new Piece;
-//         Piece whiteKing = new Piece;
-        
-//         for(int i = 0; i<8; i++){
-//             for(int j = 0; j<8; j++){
-//                     if(board[i][j] == 'k'){
-//                     Piece blackKing = Piece(board,i,j);        
-//                     }
-//                     else if(board[i][j] == 'K'){
-//                     Piece whiteKing = Piece(board,i,j);
-//                     }
-                
-//                 }
-            
-//             }
-
-//         kings.addAll(blackKing);
-//         kings.addAll(whiteKing);
-
-//         return kings;
-        
-//         }
-        
-
-//     public int inCheck(char[][] board, list<Piece> whitePieces, list<Piece> blackPieces){
-//         //function creates a list of all the possible moves on the board, and if the king is a target in that movelist
-//         //inCheck == 1 if white in check
-//         //inCheck == -1 if black in check
-//         //inCheck == 0 if no check
-        
-//         List<Piece> moveList = new ArrayList<>();
-//         List<Piece> kings = new ArrayList<>();
-//         kings = findKings(board);
-
-//         movelist.addAll(kings.get(0).checkKing(board, blackPieces);
-//         movelist.addAll(kings.get(1).checkKing(board, whitePieces);
-        
-//         for(int i = 0; i<whitePieces.size(); i++){
-//             moveList.addAll(whitePieces.get(i).possibleMoves(board));
-//         }
-//         for(int i = 0; i<blackPieces.size(); i++){
-//             movelist.addAll(blackPieces.get(i).possibleMoves(board));
-//         }
-        
-//             if (kings.get(0).findPiece(moveList) >= 0){  
-//                 return -1;
-//             }   
-//             else if (kings.get(1).findPiece(moveList) >= 0){
-//                 return 1;
-//             }
-//         }
-//         return 0;
-//     }
-// public int gameState(char[][] board, List<Piece> whitePieces, List<Piece> blackPieces){
-       
-//        List<Piece> kings = new ArrayList<>();
-//        kings = findKings(board);
-    
-//        List<Piece> blackMoves = new ArrayList<>();
-//        List<Piece> whiteMoves = new ArrayList<>();
-//        char[][] tempboard = new char[8][8];
-       
-//     for(int i = 0; i<8; i++){
-//         for(int j = 0; j<8; j++){
-//             tempboard[i][j] = board[i][j];
-//         }
-//     }
-
-//         Piece tempblackKing = new Piece(tempboard, kings.get(0).getpos_x(0), kings.get(0).getpos_y(0));
-//         Piece tempwhiteKing = new Piece(tempboard, kings.get(1).getpos_x(1), kings.get(1).getpos_y(1));
-    
-//        switch(inCheck(board, whitePieces, blackPieces)){
-//            case 0:
-//                for(int i = 0; i<whitePieces.size(); i++){
-//                   whiteMoves.addAll(whitePieces.get(i).possibleMoves(board)); 
-//                }
-//                   if(whiteMoves.size() == 0){
-//                     return -1; 
-//                   }
-//                for(int j = 0; j<blackPieces.size(); j++){
-//                    blackMoves.addAll(blackPieces.get(j).possibleMoves(board));
-//                }
-//                    if(blackMoves.size() == 0){
-//                     return -1;
-//                    }  
-//                return 0;
-               
-//                break;
-           
-//            case -1:
-//                for(int j = 0; j<blackPieces.size(); j++){
-//                    blackMoves.addAll(blackPieces.get(j).possibleMoves(board));
-//                }
-
-//                for(int i = 0; i<blackMoves.size(); i++){
-    
-//                }
-
-               
-//                break;
-           
-//            case 1;
-               
-//                break;
-//        }
-    
-
-    
-//             //once its made, do the following
-//                 //i should do a for loop, that iterates through the movelist, and simulates all of the movements of black/white pieces
-//                 //if white is in check (inCheck == 1) for ALL possible white movements. checkmate, Black wins (bot) done. return 2;
-//                 //if black is in check (inCheck == -1) for All possible black movements. checkmate, White wins (player wins). done. return 1;
-//                 //if inCheck == 0 and (if player AND bot both have LEGAL MOVES). no checkmate, game on. return 0
-//                 //if inCheck == 0 and either movelist is empty. stalemate, done. return -1
-
-//                 // Piece temp_kingPiece = new Piece(tempboard, this.pos_x, this.pos_y);
-//                 // handleMovement(tempboard, temp_kingPiece.pos_x, temp_kingPiece.pos_y, enemyPieces);
-
-
-
-
-//                 }
-
-
-
-
-//             }
 
     // getters and setters
     public int getPosX() {

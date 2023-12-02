@@ -153,13 +153,24 @@ public class GameActivity extends AppCompatActivity {
                 end_y = y;
 
                 Piece chosenPiece = new Piece(board,start_x,start_y);
-                if(chosenPiece.team()) {
-                    chosenPiece.handleMovement(board, end_x, end_y,blackPieces);
-                }
-                else
+                //removes the old version from piece list for updating
+                if(chosenPiece.team())
                 {
-                    chosenPiece.handleMovement(board, end_x, end_y,whitePieces);
+                    whitePieces.remove(chosenPiece.findPiece(whitePieces));
                 }
+                else {
+                    blackPieces.remove(chosenPiece.findPiece(blackPieces));
+                }
+                chosenPiece.handleMovement(board, end_x, end_y,whitePieces, blackPieces);
+                //re-adds new pieces
+                if(chosenPiece.team())
+                {
+                    whitePieces.add(chosenPiece);
+                }
+                else {
+                    blackPieces.add(chosenPiece);
+                }
+
                 //move is over, reset values, update grid
                 start_x = -1;
                 start_y = -1;

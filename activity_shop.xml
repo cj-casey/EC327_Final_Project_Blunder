@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <ImageView
+        android:id="@+id/wizard"
+        android:layout_width="159dp"
+        android:layout_height="220dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/lil_guy" />
+
+    <ImageView
+        android:id="@+id/pawn"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="300dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/b_pawn" />
+
+    <ImageView
+        android:id="@+id/playerPawn"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="484dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/b_pawn" />
+
+    <ImageView
+        android:id="@+id/rook"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="300dp"
+        app:layout_constraintStart_toEndOf="@+id/pawn"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/b_knight" />
+
+    <ImageView
+        android:id="@+id/playerKnight"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="484dp"
+        app:layout_constraintStart_toEndOf="@+id/pawn"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/b_knight" />
+
+    <ImageView
+        android:id="@+id/bishop"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="300dp"
+        app:layout_constraintStart_toEndOf="@+id/rook"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/b_bishop" />
+
+    <ImageView
+        android:id="@+id/playerBishop"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="484dp"
+        app:layout_constraintStart_toEndOf="@+id/rook"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/b_bishop" />
+
+    <ImageView
+        android:id="@+id/rook_"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="300dp"
+        app:layout_constraintStart_toEndOf="@+id/bishop"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/b_rook" />
+
+    <ImageView
+        android:id="@+id/playerRook"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="484dp"
+        app:layout_constraintStart_toEndOf="@+id/bishop"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/b_rook" />
+
+    <ImageView
+        android:id="@+id/bishop_"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="300dp"
+        app:layout_constraintStart_toEndOf="@+id/rook_"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/b_queen" />
+
+    <ImageView
+        android:id="@+id/playerQueen"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="484dp"
+        app:layout_constraintStart_toEndOf="@+id/rook_"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/b_queen" />
+
+    <TextView
+        android:id="@+id/pawnPoints"
+        android:layout_width="60dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"
+        android:fontFamily="@font/press_start_2p"
+        android:foregroundGravity="center"
+        android:gravity="center_horizontal"
+        android:text="100"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pawn" />
+
+    <TextView
+        android:id="@+id/pawnCountText"
+        android:layout_width="60dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="196dp"
+        android:fontFamily="@font/press_start_2p"
+        android:foregroundGravity="center"
+        android:gravity="center_horizontal"
+        android:text="0"
+        android:textColor="#000000"
+        android:textSize="34sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pawn" />
+
+    <TextView
+        android:id="@+id/pawnPoints2"
+        android:layout_width="60dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:fontFamily="@font/press_start_2p"
+        android:foregroundGravity="center"
+        android:gravity="center_horizontal"
+        android:text="300"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@+id/pawnPoints"
+        app:layout_constraintTop_toBottomOf="@+id/pawn" />
+
+    <TextView
+        android:id="@+id/knightCountText"
+        android:layout_width="60dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="196dp"
+        android:fontFamily="@font/press_start_2p"
+        android:foregroundGravity="center"
+        android:gravity="center_horizontal"
+        android:text="0"
+        android:textColor="#000000"
+        android:textSize="34sp"
+        app:layout_constraintStart_toEndOf="@+id/pawnPoints"
+        app:layout_constraintTop_toBottomOf="@+id/pawn" />
+
+    <TextView
+        android:id="@+id/pawnPoints3"
+        android:layout_width="60dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:fontFamily="@font/press_start_2p"
+        android:foregroundGravity="center"
+        android:gravity="center_horizontal"
+        android:text="300"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@+id/pawnPoints2"
+        app:layout_constraintTop_toBottomOf="@+id/pawn" />
+
+    <TextView
+        android:id="@+id/bishopCountText"
+        android:layout_width="60dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="196dp"
+        android:fontFamily="@font/press_start_2p"
+        android:foregroundGravity="center"
+        android:gravity="center_horizontal"
+        android:text="0"
+        android:textColor="#000000"
+        android:textSize="34sp"
+        app:layout_constraintStart_toEndOf="@+id/pawnPoints2"
+        app:layout_constraintTop_toBottomOf="@+id/pawn" />
+
+    <TextView
+        android:id="@+id/pawnPoints4"
+        android:layout_width="60dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:fontFamily="@font/press_start_2p"
+        android:foregroundGravity="center"
+        android:gravity="center_horizontal"
+        android:text="500"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@+id/pawnPoints3"
+        app:layout_constraintTop_toBottomOf="@+id/pawn" />
+
+    <TextView
+        android:id="@+id/rookCountText"
+        android:layout_width="60dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="196dp"
+        android:fontFamily="@font/press_start_2p"
+        android:foregroundGravity="center"
+        android:gravity="center_horizontal"
+        android:text="0"
+        android:textColor="#000000"
+        android:textSize="34sp"
+        app:layout_constraintStart_toEndOf="@+id/pawnPoints3"
+        app:layout_constraintTop_toBottomOf="@+id/pawn" />
+
+    <TextView
+        android:id="@+id/queenCountText"
+        android:layout_width="60dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="196dp"
+        android:fontFamily="@font/press_start_2p"
+        android:foregroundGravity="center"
+        android:gravity="center_horizontal"
+        android:text="0"
+        android:textColor="#000000"
+        android:textSize="34sp"
+        app:layout_constraintStart_toEndOf="@+id/pawnPoints4"
+        app:layout_constraintTop_toBottomOf="@+id/pawn" />
+
+    <TextView
+        android:id="@+id/pawnPoints10"
+        android:layout_width="60dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:fontFamily="@font/press_start_2p"
+        android:foregroundGravity="center"
+        android:gravity="center_horizontal"
+        android:text="900"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@+id/pawnPoints4"
+        app:layout_constraintTop_toBottomOf="@+id/pawn" />
+
+    <TextView
+        android:id="@+id/inventory"
+        android:layout_width="240dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/press_start_2p"
+        android:text="Your Inventory:"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pawnPoints2" />
+
+    <TextView
+        android:id="@+id/inventory2"
+        android:layout_width="240dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="248dp"
+        android:fontFamily="@font/press_start_2p"
+        android:text="Le Gringus Shop:"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/exitButton"
+        android:layout_width="360dp"
+        android:layout_height="120dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"
+        android:text="ENTER THE NEXT FLOOR"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:fontFamily="@font/press_start_2p"
+        android:backgroundTint="@color/wood"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bishopCountText" />
+</androidx.constraintlayout.widget.ConstraintLayout>

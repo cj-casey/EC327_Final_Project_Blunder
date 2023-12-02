@@ -1,15 +1,15 @@
 package com.example.onechess;
-
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Piece {
+public class Piece implements Serializable {
     // Piece Class, includes all piece movement functionality and takes the chess
     // board as a input for most functions
     private char piece;
     private int pos_x;
     private int pos_y;
-    private int turnCount;
+    private transient int turnCount;
 
     public Piece(char[][] board, int x, int y) {
         // constructor, self-explanatory
@@ -71,7 +71,7 @@ public class Piece {
         ///
         brPathLength = Math.min(btmPathLength, rigPathLength);
         ///
-        blPathLength = Math.min(topPathLength, lefPathLength);
+        blPathLength = Math.min(btmPathLength, lefPathLength);
 
         tlPathLength = Math.min(topPathLength, lefPathLength);
         // checks top right path
@@ -513,7 +513,7 @@ public class Piece {
         }
     }
 
-    public void handleMovement(char[][] board, int x, int y, List<Piece> whitePieces, List<Piece> blackPieces) { // moves pieces across board and
+    public boolean handleMovement(char[][] board, int x, int y, List<Piece> whitePieces, List<Piece> blackPieces) { // moves pieces across board and
         // takes pieces
 
         //prevents user/bot from picking off the board
@@ -551,7 +551,7 @@ public class Piece {
                     this.takePiece(board, x, y);
                 } else {
                     System.out.println("Invalid Move");
-                    return;
+                    return false;
 
                 }
             } else { //generic pieces
@@ -576,11 +576,13 @@ public class Piece {
                 } else {
                     System.out.println("Invalid Move");
                     printMovelist(this.possibleMoves(board,this.team()));
-                    return;
+                    return false;
                 }
             }
         }
         this.turnCount++; //increments turn per movement
+        return true;
+
     }
 
     // getters and setters

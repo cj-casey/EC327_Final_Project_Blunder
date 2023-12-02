@@ -2,16 +2,22 @@ package com.example.onechess;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.ImageView;
+import com.google.gson.Gson;
 
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,9 +33,23 @@ public class GameActivity extends AppCompatActivity {
             {'N', 'P', ' ', ' ', ' ', ' ', 'p', 'n'},
             {'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r'}};
    private int start_x = -1,start_y = -1,end_x = -1,end_y = -1; //placeholder values for movement
+
+    private int turnCount = 0;
+
     //declaration of white and black pieces
     List<Piece> whitePieces = new ArrayList<>();
     List<Piece> blackPieces = new ArrayList<>();
+
+    private SharedPreferences sharedPreferences;
+
+    /* sends the Score to the loss screen so it can be entered to the MongoDB database
+    Intent intent = new Intent(this, DestinationActivity.class);
+    intent.putExtra("key", "value"); // replace "key" with your actual key and "value" with actual value
+    startActivity(intent);
+     */
+
+    //Multiple Intents are needed, one is the Score to send obviously, but with the game loop,
+    //the lost pieces are also necessary, create a function that
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +57,18 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         //initialize grid and pieces
+        Intent intent = getIntent();
+
+        /*if (intent.hasExtra("pieceList")) {
+            // Get the list from the Intent
+            whitePieces = (List<Piece>) intent.getSerializableExtra("pieceList");
+        } else {
+            // Initialize a new list
+            initializePieceList(true);
+        } */
         updateGrid();
-        initializePieceList();
+        initializePieceList(true);
+
         //creates shop and leaderboard buttons
         Button shopButton = findViewById(R.id.quitButton);
         shopButton.setOnClickListener(new View.OnClickListener() {
@@ -122,12 +152,12 @@ public class GameActivity extends AppCompatActivity {
         tableLayout.removeAllViews();
     }
 
-    private void initializePieceList()
+    private void initializePieceList(boolean firstTime)
     { //self-explanatory
         for(int i = 0; i < 8; i++) {
             for(int j = 0; j < 8 ;j++) {
                 Piece Space = new Piece(board,i,j);
-                if (Space.team() && (Space.isOccupied()))
+                if (Space.team() && (Space.isOccupied()) && firstTime)
                 {
                     whitePieces.add(Space);
                 }
@@ -139,6 +169,7 @@ public class GameActivity extends AppCompatActivity {
         }
     }
         private void handlePieceClick(int x, int y) {
+            boolean valid;
             // if the start was not chosen, set the values
             if(start_x == -1)
             {
@@ -153,29 +184,29 @@ public class GameActivity extends AppCompatActivity {
                 end_y = y;
 
                 Piece chosenPiece = new Piece(board,start_x,start_y);
-                //removes the old version from piece list for updating
-                if(chosenPiece.team())
-                {
-                    whitePieces.remove(chosenPiece.findPiece(whitePieces));
-                }
-                else {
-                    blackPieces.remove(chosenPiece.findPiece(blackPieces));
-                }
-                chosenPiece.handleMovement(board, end_x, end_y,whitePieces, blackPieces);
-                //re-adds new pieces
-                if(chosenPiece.team())
-                {
-                    whitePieces.add(chosenPiece);
-                }
-                else {
-                    blackPieces.add(chosenPiece);
-                }
 
-                //move is over, reset values, update grid
-                start_x = -1;
-                start_y = -1;
-                clearGrid();
-                updateGrid();
+                if((turnCount % 2 == 0 && chosenPiece.team()) || (turnCount % 2 != 0 && !chosenPiece.team())) {
+                    //removes the old version from piece list for updating
+                    if (chosenPiece.team()) {
+                        whitePieces.remove(chosenPiece.findPiece(whitePieces));
+                    } else {
+                        blackPieces.remove(chosenPiece.findPiece(blackPieces));
+                    }
+                    valid = chosenPiece.handleMovement(board, end_x, end_y, whitePieces, blackPieces);
+                    //re-adds new pieces
+                    if (chosenPiece.team()) {
+                        whitePieces.add(chosenPiece);
+                    } else {
+                        blackPieces.add(chosenPiece);
+                    }
+                    if(valid) {turnCount++;}
+                }
+                    //move is over, reset values, update grid
+                    start_x = -1;
+                    start_y = -1;
+                    clearGrid();
+                    updateGrid();
+
             }
 
             // Perform actions based on the clicked piece

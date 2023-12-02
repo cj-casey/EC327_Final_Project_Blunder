@@ -1,48 +1,87 @@
-public class Mongo{
+package com.example.onechess;
 
 
+
+
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.MongoException;
+import com.mongodb.ServerApi;
+import com.mongodb.ServerApiVersion;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Sorts;
+
 import org.bson.Document;
-import org.bson.BsonDocument;
+import org.bson.conversions.Bson;
 
-public static void main(String args[]) {
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-  try{
-  // Set system properties via commandline or programmatically
-  System.setProperty("javax.net.ssl.keyStore", "leaderboarddata");
-  System.setProperty("javax.net.ssl.keyStorePassword", "BogiBogi12378&*#");
-//^^^ We need to initialize a key to the server that is going to be sent. ^^^
+public class Mongo{
+    private static final String CONNECTION_STRING = "mongodb+srv://<bogdans@bu.edu>:<BogiBogi12378&*#>@leaderboarddata.s28201v.mongodb.net/?retryWrites=true&w=majority";
 
-  String uri = "mongodb+srv://leaderboarddata.s28201v.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority"; //URI for the Mongo Server database is established.
-  ConnectionString connectionString = new ConnectionString(uri);
-  MongoClientSettings settings = MongoClientSettings.builder().applyConnectionString(connectionString).serverApi(ServerApi.builder().version(ServerApiVersion.V1).build()).build(); //BIG DOT OPERATORS
-
-
-  MongoClient mongoClient = MongoClients.create(settings);
-  MongoDatabase database = mongoClient.getDatabase("testDB");
-  MongoCollection<Document> collection = database.getCollection("testCol");
-  BsonDocument filter = new BsonDocument();
-  collection.countDocuments(filter);
-
-  }
-
-  catch(Exception e){ //If it fails to reach the database, it won't thrown an error and crash the program. --> Instead, it will just not do anything, and will throw an error to the console.
-      System.out.Println("Failed to reach MongoDB Database");
-      e.printStackTrace();
-  }
-
- 
-
-  finally{
-    if (mongoClient != null){
-      mongoClient.close();
-      system.out.println("MongoDB connection closed."); //If the connection is successful, it will close the connection.
+    public static MongoClient getMongoClient() {
+        return MongoClients.create(CONNECTION_STRING);
     }
-  }
+        public static boolean connect() {
+            ServerApi serverApi = ServerApi.builder()
+                    .version(ServerApiVersion.V1)
+                    .build();
+            MongoClientSettings settings = MongoClientSettings.builder()
+                    .applyConnectionString(new ConnectionString(CONNECTION_STRING))
+                    .serverApi(serverApi)
+                    .build();
+            // Create a new client and connect to the server
+            try (MongoClient mongoClient = MongoClients.create(settings)) {
+                try {
+                    // Send a ping to confirm a successful connection
+                    MongoDatabase database = mongoClient.getDatabase("admin");
+                    database.runCommand(new Document("ping", 1));
+                    System.out.println("Pinged your deployment. You successfully connected to MongoDB!");
+                    return true;
+                } catch (MongoException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
+        }
+    public static void insertDocument(String username, int score) {
+        MongoClient mongoClient = getMongoClient();
+        MongoDatabase database = mongoClient.getDatabase("leaderboarddata");
+        MongoCollection<Document> collection = database.getCollection("DataSet");
 
-}
+        Document document = new Document("Name", username).append("Score", score);
+        collection.insertOne(document);
+
+        if (collection.countDocuments() > 10) {
+            Document lowestScoreDocument = collection.find().sort(Sorts.ascending("Score")).first();
+            collection.deleteOne(new Document("_id", lowestScoreDocument.getObjectId("_id")));
+        }
+        mongoClient.close();
+    }
+
+    public List<Document> readLeaderboard()
+    {
+        List<Document> leaderboard = new ArrayList<>();
+        MongoClient mongoClient = getMongoClient();
+        MongoDatabase database = mongoClient.getDatabase("leaderboarddata");
+        MongoCollection<Document> collection = database.getCollection("DataSet");
+
+        FindIterable<Document> iterable = collection.find().sort(Sorts.ascending("Score"));
+        mongoClient.close();
+
+        for(Document document: iterable)
+        {
+            leaderboard.add(document);
+        }
+
+        return leaderboard;
+    }
 
 }

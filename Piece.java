@@ -101,7 +101,7 @@ public class Piece {
                 x = pos_x + i;
                 y = pos_y - i;
                 if ((x > -1) && (x < 8) && (y > -1) && (y < 8)) {
-                    Piece space = new Piece(board, pos_x + i, pos_y - i);
+                    Piece space = new Piece(board, x, y);
 
                     if (!space.isOccupied()) {
                         allMovements.add(space);
@@ -117,10 +117,10 @@ public class Piece {
         // checks bottom left path
         blLoop: {
             for (int i = 1; i <= blPathLength; i++) {
-                x = pos_x - i;
-                y = pos_y - i;
+                x = this.pos_x - i;
+                y = this.pos_y - i;
                 if ((x > -1) && (x < 8) && (y > -1) && (y < 8)) {
-                    Piece space = new Piece(board, pos_x - i, pos_y - i);
+                    Piece space = new Piece(board,x, y);
                     if (!space.isOccupied()) {
                         allMovements.add(space);
                     } else if (space.team() != this.team()) {
@@ -153,32 +153,59 @@ public class Piece {
         return allMovements;
     }
 
-    public List<Piece> checkKing(char[][] board, List<Piece> pieceList) { //returns a list of all possible moves for the king
+    public List<Piece> checkKing(char[][] board, List<Piece> whitePieces, List<Piece> blackPieces) { //returns a list of all possible moves for the king
         List<Piece> unCheckedList = new ArrayList<>();
         List<Piece> movementList = new ArrayList<>();
-        boolean found = false;
+
+        char tempPiece;
+        int kingIndex;
         
-        for (int i = -1; i < 2; i++) {
+         for (int i = -1; i < 2; i++) {
             for (int j = -1; j < 2; j++) {
                 if (!(i == 0 && j == 0)) // doesnt check itself
                 {
-                    if (((this.pos_x + i) > 0 && (this.pos_x + i) < 8)
-                            && ((this.pos_y + j) > 0 && (this.pos_y + j < 8))) // within bounds
+                    if (((this.pos_x + i) > -1 && (this.pos_x + i) < 8)
+                            && ((this.pos_y + j) > -1 && (this.pos_y + j < 8))) // within bounds
                     {
                         Piece space = new Piece(board, this.pos_x + i, this.pos_y + j);
-                        unCheckedList.add(space);
-                    }
 
+                        if(!space.isOccupied() || space.team() != this.team())
+                        {
+                        unCheckedList.add(space);
+                        }
+                    }
                 }
             }
         }
 
+        for(int i = 0; i < unCheckedList.size();i++)
+        {   
+            tempPiece = unCheckedList.get(i).piece;
+            unCheckedList.get(i).piece = this.piece;
+            this.piece = ' ';
+            if(unCheckedList.get(i).inCheck(board,whitePieces,blackPieces) == 0)
+            {
+                if(this.team()) {kingIndex=1;}else{kingIndex = 0;}
+
+                if(!kingsTooClose(findKings(board).get(kingIndex)))
+                {
+                this.piece = unCheckedList.get(i).piece;
+                unCheckedList.get(i).piece = tempPiece;
+                movementList.add(unCheckedList.get(i));
+                }
+            }
+        }
+
+
+
+
+            /*
         for (int i = 0; i < unCheckedList.size(); i++) // iterates through unchecked list for possible moves
         {
             if (!(unCheckedList.get(i).isOccupied()) || (unCheckedList.get(i).team() != this.team())) // if its not occupied or the opposite team
                                                                                                      
             {
-                //board[unCheckedList.get(i).pos_x][unCheckedList.get(i).pos_x] = this.piece; //place temporary king
+                board[unCheckedList.get(i).pos_x][unCheckedList.get(i).pos_y] = this.piece; //place temporary king
                 for (int j = 0; j < pieceList.size(); j++) // checks if possible moves are currently under attack and
                                                            // thus not valid
                 {
@@ -201,17 +228,76 @@ public class Piece {
                         }
                     }
                 }
-               // board[unCheckedList.get(i).pos_x][unCheckedList.get(i).pos_x] = unCheckedList.get(i).piece;
+               board[unCheckedList.get(i).pos_x][unCheckedList.get(i).pos_y] = unCheckedList.get(i).piece;
                 if (!found) {
                     movementList.add(unCheckedList.get(i)); // adds happy valid move to list
                 }
             }
 
-        }
+        } */
         // iterate through all Pieces in Piece list and check to see which of the King's
         // possible moves are in those, if all of them ar
         return movementList;
     }
+
+    public List<Piece> findKings(char[][] board){
+
+        List<Piece> kings = new ArrayList<>();
+        kings.add(new Piece(board,0,0));
+        kings.add(new Piece(board,0,0));
+        for(int i = 0; i<8; i++){
+            for(int j = 0; j<8; j++){
+                    if(board[i][j] == 'k'){
+                    kings.get(1).setPiece('k');
+                    kings.get(1).setPosX(i);
+                    kings.get(1).setPosY(j);
+                    }
+                    else if(board[i][j] == 'K'){
+                        kings.get(0).setPiece('K');
+                        kings.get(0).setPosX(i);
+                        kings.get(0).setPosY(j);
+                    }
+
+                }
+
+            }
+
+            System.out.println(kings.get(0));
+            System.out.println(kings.get(1));
+        return kings;
+
+        }
+
+
+    public int inCheck(char[][] board, List<Piece> whitePieces, List<Piece> blackPieces){
+        //function creates a list of all the possible moves on the board, and if the king is a target in that movelist
+        //inCheck == 1 if white in check
+        //inCheck == -1 if black in check
+        //inCheck == 0 if no check
+
+        List<Piece> moveList = new ArrayList<>();
+        List<Piece> kings = new ArrayList<>();
+        kings = findKings(board);
+
+        for(int i = 0; i<whitePieces.size(); i++){
+            moveList.addAll(whitePieces.get(i).possibleMoves(board,this.team()));
+        }
+        for(int i = 0; i<blackPieces.size(); i++){
+            moveList.addAll(blackPieces.get(i).possibleMoves(board,this.team()));
+        }
+
+            if (kings.get(0).inMovelist(moveList)){
+                this.printMovelist(moveList);
+                return 1;
+            }
+            else if (kings.get(1).inMovelist(moveList)){
+                this.printMovelist(moveList);
+                return -1;
+            }
+            this.printMovelist(moveList);
+            return 0;
+        }
+
 
     public List<Piece> checkCross(char[][] board) { // checks all possible movement spaces for a piece that moves in a
                                                     // cross formation(ie rook queen)
@@ -314,7 +400,7 @@ public class Piece {
             if ((lindex > -1) && (lindex < 8) && (sindey > -1) && (sindey < 8)) {
                 Piece move1 = new Piece(board, lindex, sindey);
 
-                if ((!move1.isOccupied() && (this.team() != move1.team()))) {
+                if ((!move1.isOccupied() || (this.team() != move1.team()))) {
                     allMovements.add(move1);
                 }
             }
@@ -322,7 +408,7 @@ public class Piece {
             if ((sindex > -1) && (sindex < 8) && (lindey > -1) && (lindey < 8)) {
                 Piece move2 = new Piece(board, sindex, lindey);
 
-                if ((!move2.isOccupied() && (this.team() != move2.team()))) {
+                if ((!move2.isOccupied() || (this.team() != move2.team()))) {
                     allMovements.add(move2);
                 }
             }
@@ -442,7 +528,7 @@ public class Piece {
         }
     }
 
-    public void handleMovement(char[][] board, int x, int y, List<Piece> enemyPieces) { // moves pieces across board and
+    public void handleMovement(char[][] board, int x, int y, List<Piece> whitePieces, List<Piece> blackPieces) { // moves pieces across board and
                                                                                         // takes pieces
 
         //prevents user/bot from picking off the board
@@ -459,20 +545,24 @@ public class Piece {
         //creates piece object for the target spot
         Piece target = new Piece(board, x, y);
 
-        char tempPiece = this.piece;
     if(target.piece != 'k' && target.piece != 'K' && this.piece != ' ')
     {
-        if ((64 < this.piece) && (this.piece < 92)) {
-            tempPiece = Character.toLowerCase(this.piece);
-        }
+    
+            if (this.piece == 'k' || this.piece == 'K') { //king checking
+                if (target.inMovelist(this.checkKing(board, whitePieces,blackPieces))) { //
+                        System.out.println(target.inMovelist(this.checkKing(board, whitePieces,blackPieces)));
+                        System.out.println("FUCKK");
 
-            if (tempPiece == 'k') { //king checking
-
-                if (target.inMovelist(this.checkKing(board, enemyPieces))) { //
-                        this.takePiece(board, x, y);
-                        if (target.isOccupied()) { //if there was a piece, it finds and removes that piece from the enemy pieces list 
-                            enemyPieces.remove(target.findPiece(enemyPieces));
+                        if (target.isOccupied()) {
+                            if(this.team()){
+                             //if there was a piece, it finds and removes that piece from the enemy pieces list 
+                                blackPieces.remove(target.findPiece(blackPieces));
+                            }
+                            else{
+                                whitePieces.remove(target.findPiece(whitePieces));
+                            }
                         }
+                        this.takePiece(board, x, y);
                 } else {
                     System.out.println("Invalid Move");
                     return;
@@ -487,9 +577,16 @@ public class Piece {
                     System.out.println("Possible Moves");
                     printMovelist(this.possibleMoves(board,this.team()));
                     this.takePiece(board, x, y);
-                    if (target.isOccupied()) {
-                        enemyPieces.remove(target.findPiece(enemyPieces));
-                    }
+                    if(target.isOccupied())
+                    {
+                    if(this.team()){
+                             //if there was a piece, it finds and removes that piece from the enemy pieces list 
+                                blackPieces.remove(target.findPiece(blackPieces));
+                            }
+                            else{
+                                whitePieces.remove(target.findPiece(whitePieces));
+                            }
+                        }
                 } else {
                     System.out.println("Invalid Move");
                     printMovelist(this.possibleMoves(board,this.team()));

@@ -10,8 +10,6 @@ import android.widget.TableRow;
 import android.widget.ImageView;
 
 
-import com.example.onechess.Piece;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
@@ -24,7 +22,7 @@ public class GameActivity extends AppCompatActivity {
             {'N', 'P', ' ', ' ', ' ', ' ', 'p', 'n'},
             {'B', 'P', ' ', ' ', ' ', ' ', 'p', 'b'},
             {'Q', 'P', ' ', ' ', ' ', ' ', 'p', 'q'},
-            {'K', ' ', ' ', ' ', ' ', ' ', 'p', 'k'},
+            {'K', 'P', ' ', ' ', ' ', ' ', 'p', 'k'},
             {'B', 'P', ' ', ' ', ' ', ' ', 'p', 'b'},
             {'N', 'P', ' ', ' ', ' ', ' ', 'p', 'n'},
             {'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r'}};
@@ -39,10 +37,10 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         //initialize grid and pieces
-        initializeGrid();
+        updateGrid();
         initializePieceList();
         //creates shop and leaderboard buttons
-        Button shopButton = findViewById(R.id.shopButton);
+        Button shopButton = findViewById(R.id.quitButton);
         shopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,7 +61,7 @@ public class GameActivity extends AppCompatActivity {
         });
     }
 
-    private void initializeGrid() {
+    private void updateGrid() {
         //creates table layout
         TableLayout tableLayout = findViewById(R.id.imageGrid);
         //creates array of images to iterate through
@@ -117,45 +115,11 @@ public class GameActivity extends AppCompatActivity {
             }
         }
     }
-
-    public void updateGrid() {
+    public void clearGrid() {
         //this function is identical to initialize grid, except it overrites the existing grid
         TableLayout tableLayout = findViewById(R.id.imageGrid);
-        System.out.println("Updated");
         // Clear the existing TableLayout (remove all existing ImageViews)
         tableLayout.removeAllViews();
-
-        ImageView[][] pieceViews = new ImageView[8][8];
-
-        for (int i = 7; i > -1; i--) {
-            TableRow tableRow = new TableRow(this);
-            TableRow.LayoutParams rowParams = new TableRow.LayoutParams(
-                    TableRow.LayoutParams.WRAP_CONTENT,
-                    TableRow.LayoutParams.WRAP_CONTENT);
-            tableRow.setLayoutParams(rowParams);
-            for (int j = 0; j < 8; j++) {
-                char piece = board[j][i];
-
-                // Create an ImageView
-                ImageView imageView = new ImageView(this);
-                pieceViews[i][j] = imageView;
-                // Set image resource based on the char value
-                setImageResource(imageView, piece);
-
-                // Optionally, set layout parameters for the ImageView
-                TableRow.LayoutParams params = new TableRow.LayoutParams(
-                        TableRow.LayoutParams.WRAP_CONTENT,
-                        TableRow.LayoutParams.WRAP_CONTENT);
-                params.setMargins(10, 14, 14, 10);  // Adjust margins as needed
-
-                // Add the ImageView to the TableRow
-                tableRow.addView(imageView, params);
-
-            }
-
-            // Add the TableRow to the TableLayout
-            tableLayout.addView(tableRow);
-        }
     }
 
     private void initializePieceList()
@@ -178,8 +142,10 @@ public class GameActivity extends AppCompatActivity {
             // if the start was not chosen, set the values
             if(start_x == -1)
             {
-               start_x = x;
-               start_y = y;
+                if(board[x][y] != ' ') {
+                    start_x = x;
+                    start_y = y;
+                }
             }
             else
             { //if start was chosen, pick end values and call the handleMovement function
@@ -197,6 +163,7 @@ public class GameActivity extends AppCompatActivity {
                 //move is over, reset values, update grid
                 start_x = -1;
                 start_y = -1;
+                clearGrid();
                 updateGrid();
             }
 

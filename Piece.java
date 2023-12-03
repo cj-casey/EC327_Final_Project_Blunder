@@ -19,6 +19,14 @@ public class Piece implements Serializable {
         this.turnCount = 0;
     }
 
+    public Piece(char piece,int x,int y){
+//constructor,self-explanatory
+        this.piece=piece;
+        this.pos_x=x;
+        this.pos_y=y;
+        this.turnCount=0;
+    }
+
     public String toString() {
         return piece + " " + pos_x + " " + pos_y; // returns components as string
     }
@@ -513,7 +521,8 @@ public class Piece implements Serializable {
         }
     }
 
-    public boolean handleMovement(char[][] board, int x, int y, List<Piece> whitePieces, List<Piece> blackPieces) { // moves pieces across board and
+    public boolean handleMovement(char[][] board, int x, int y, List<Piece> whitePieces, List<Piece> blackPieces, Piece TakenPiece) {
+        // moves pieces across board and
         // takes pieces
 
         //prevents user/bot from picking off the board
@@ -540,6 +549,11 @@ public class Piece implements Serializable {
                     System.out.println(this.checkKing(board,whitePieces,blackPieces));
 
                     if (target.isOccupied()) {
+
+                        TakenPiece.setPiece(target.piece);
+                        TakenPiece.setPosX(target.pos_x);
+                        TakenPiece.setPosY(target.pos_y);
+
                         if(this.team()){
                             //if there was a piece, it finds and removes that piece from the enemy pieces list
                             blackPieces.remove(target.findPiece(blackPieces));
@@ -559,10 +573,16 @@ public class Piece implements Serializable {
                 System.out.println(target);
                 System.out.println("");
 
-                if (target.inMovelist(this.possibleMoves(board,this.team()))) {
+                if (target.inMovelist(this.possibleMoves(board, this.team() ))) {
                     System.out.println("Possible Moves");
                     printMovelist(this.possibleMoves(board,this.team()));
+
+                    TakenPiece.setPiece(target.piece);
+                    TakenPiece.setPosX(target.pos_x);
+                    TakenPiece.setPosY(target.pos_y);
+
                     this.takePiece(board, x, y);
+
                     if(target.isOccupied())
                     {
                         if(this.team()){
@@ -582,8 +602,109 @@ public class Piece implements Serializable {
         }
         this.turnCount++; //increments turn per movement
         return true;
-
     }
+    public void undoMove(char[][] board, int start_x, int start_y, Piece Taker){
+        board[Taker.pos_x][Taker.pos_y] = this.piece;
+
+        this.setPosX(Taker.pos_x);
+        this.setPosY(Taker.pos_y);
+
+
+        Taker.setPosX(start_x);
+        Taker.setPosY(start_y);
+        Taker.turnCount--;
+        this.turnCount--;
+        board[start_x][start_y] = Taker.piece;
+    }
+
+    public int gameState(char[][] board, List<Piece> whitePieces, List<Piece> blackPieces, boolean team_turn) {
+
+
+        List<Piece> kings = new ArrayList<>();
+        kings = findKings(board);
+
+        List<Piece> blackMoves = new ArrayList<>();
+        List<Piece> whiteMoves = new ArrayList<>();
+
+        int temp_inCheck;
+        System.out.println("in check is v");
+        System.out.println(inCheck(board, whitePieces, blackPieces));
+        switch (inCheck(board, whitePieces, blackPieces)) {
+
+            case 0:
+                for (int i = 0; i < whitePieces.size(); i++) {
+                    whiteMoves.addAll(whitePieces.get(i).possibleMoves(board, team_turn));
+                }
+                whiteMoves.addAll(kings.get(0).checkKing(board, whitePieces, blackPieces));
+                for (int j = 0; j < blackPieces.size(); j++) {
+                    blackMoves.addAll(blackPieces.get(j).possibleMoves(board, team_turn));
+                }
+                blackMoves.addAll(kings.get(1).checkKing(board, whitePieces, blackPieces));
+
+                if (((blackMoves.size() == 0) && (!team_turn)) || (((whiteMoves.size() == 0) && (team_turn)))) {
+                    return -1;
+                }
+                break;
+            case -1: //if incheck == -1, black in check
+
+                for (int j = 0; j < blackPieces.size(); j++) {
+                    blackMoves.addAll(blackPieces.get(j).possibleMoves(board, team_turn));
+                }
+                blackMoves.addAll(kings.get(1).checkKing(board, whitePieces, blackPieces));
+
+
+                List<Piece> blackMovecopy = new ArrayList<>();
+                blackMovecopy.addAll(blackMoves);
+
+                for (int i = 0; i < blackMoves.size(); i++) {
+                    Piece TargetPiece = new Piece(board, blackMoves.get(i).getPosX(), blackMoves.get(i).getPosY());
+                    (blackMoves.get(i)).handleMovement(board, blackMoves.get(i).getPosX(), blackMoves.get(i).getPosY(), whitePieces, blackPieces, TargetPiece);
+                    temp_inCheck = this.inCheck(board, whitePieces, blackPieces);
+
+                    if (temp_inCheck == -1) {
+                        blackMovecopy.remove(blackMoves.get(i));
+                    }
+                    TargetPiece.undoMove(board, blackMoves.get(i).getPosX(), blackMoves.get(i).getPosY(), TargetPiece);
+                }
+
+                if ((blackMovecopy.size() == 0) && (!team_turn)) {
+                    return 1; //white wins by checkmate
+                } else {
+                    break;
+                }
+
+
+            case 1: //if incheck == 1, white in check
+
+                for (int j = 0; j < whitePieces.size(); j++) {
+                    whiteMoves.addAll(whitePieces.get(j).possibleMoves(board, team_turn));
+                }
+                whiteMoves.addAll(kings.get(0).checkKing(board, whitePieces, blackPieces));
+
+                List<Piece> whiteMovecopy = new ArrayList<>();
+                whiteMovecopy.addAll(whiteMoves);
+                printMovelist(whiteMoves);
+
+
+                for (int i = 0; i < whiteMoves.size(); i++) {
+                    Piece TargetPiece = new Piece(board, whiteMoves.get(i).getPosX(), whiteMoves.get(i).getPosY());
+                    (whiteMoves.get(i)).handleMovement(board, whiteMoves.get(i).getPosX(), whiteMoves.get(i).getPosY(), whitePieces, blackMoves, TargetPiece);
+                    temp_inCheck = this.inCheck(board, whitePieces, blackPieces);
+
+                    if (temp_inCheck == 1) {
+                        whiteMovecopy.remove(whiteMoves.get(i));
+                    }
+                    TargetPiece.undoMove(board, whiteMoves.get(i).pos_x, whiteMoves.get(i).pos_y, TargetPiece);
+                }
+                if ((whiteMovecopy.size() == 0) && team_turn) {
+                    return 2; //black wins by checkmate
+                } else {
+                    break;
+                }
+        }
+        return 0;
+    }
+
 
     // getters and setters
     public int getPosX() {

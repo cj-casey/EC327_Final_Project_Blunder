@@ -1,4 +1,6 @@
 package com.example.onechess;
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -247,36 +249,6 @@ public class Piece implements Serializable {
         }
         return false;
     }
-
-    /*public int inCheck(char[][] board, List<Piece> whitePieces, List<Piece> blackPieces){
-        //function creates a list of all the possible moves on the board, and if the king is a target in that movelist
-        //inCheck == 1 if white in check
-        //inCheck == -1 if black in check
-        //inCheck == 0 if no check
-
-        List<Piece> moveList = new ArrayList<>();
-        List<Piece> kings = new ArrayList<>();
-        kings = findKings(board);
-
-        for(int i = 0; i<whitePieces.size(); i++){
-            moveList.addAll(whitePieces.get(i).possibleMoves(board,this.team()));
-        }
-        for(int i = 0; i<blackPieces.size(); i++){
-            moveList.addAll(blackPieces.get(i).possibleMoves(board,this.team()));
-        }
-
-        if (kings.get(0).inMovelist(moveList)){
-            //    this.printMovelist(moveList);
-            return 1;
-        }
-        else if (kings.get(1).inMovelist(moveList)){
-            //this.printMovelist(moveList);
-            return -1;
-        }
-        // this.printMovelist(moveList);
-        return 0;
-    }*/
-
 
     public List<Piece> checkCross(char[][] board) { // checks all possible movement spaces for a piece that moves in a
         // cross formation(ie rook queen)
@@ -558,6 +530,11 @@ public class Piece implements Serializable {
     public void printMovelist(List<Piece> moveList) { //prints entire list
         for (int i = 0; i < moveList.size(); i++) {
             System.out.println(moveList.get(i));
+            Log.d("moveListX",String.valueOf(moveList.get(i).getPosX()));
+            Log.d("moveListY",String.valueOf(moveList.get(i).getPosY()));
+            Log.d("moveListPiece",String.valueOf(moveList.get(i).getPiece()));
+
+
         }
     }
 
@@ -579,65 +556,43 @@ public class Piece implements Serializable {
 
         //creates piece object for the target spot
         Piece target = new Piece(board, x, y);
+        if (this.piece == 'k' || this.piece == 'K') { //king checking
+            if (target.inMovelist(this.checkKing(board, whitePieces, blackPieces))) { //
 
-       // if(target.piece != 'k' && target.piece != 'K' && this.piece != ' ')
-       // {
+                if (target.isOccupied()) {
 
-            if (this.piece == 'k' || this.piece == 'K') { //king checking
-                if (target.inMovelist(this.checkKing(board, whitePieces,blackPieces))) { //
-                   // System.out.println(target.inMovelist(this.checkKing(board, whitePieces,blackPieces)));
-                   // System.out.println("King's moves:");
-                   // System.out.println(this.checkKing(board,whitePieces,blackPieces));
-
-                    if (target.isOccupied()) {
-
-                        if(this.team()){
-                            //if there was a piece, it finds and removes that piece from the enemy pieces list
-                            blackPieces.remove(target.findPiece(blackPieces));
-                        }
-                        else{
-                            whitePieces.remove(target.findPiece(whitePieces));
-                        }
+                    if (this.team()) {
+                        blackPieces.remove(target.findPiece(blackPieces));
+                    } else {
+                        whitePieces.remove(target.findPiece(whitePieces));
                     }
-                    this.takePiece(board, x, y);
-
-                } else {
-                   // System.out.println("Invalid Move");
-                    return false;
-
                 }
-            } else { //generic pieces
-               // System.out.println("Target Piece");
-                //System.out.println(target);
-              //  System.out.println("");
-
-                if (target.inMovelist(this.possibleMoves(board, this.team() ))) {
-                   // System.out.println("Possible Moves");
-                   // printMovelist(this.possibleMoves(board,this.team()));
-                    //if(this.checkDiscoverValid(board,target,whitePieces,blackPieces)) {
-                            this.takePiece(board, x, y);
-
-                            if (target.isOccupied()) {
-                                if (this.team()) {
-                                    //if there was a piece, it finds and removes that piece from the enemy pieces list
-                                    blackPieces.remove(target.findPiece(blackPieces));
-                                } else {
-                                    whitePieces.remove(target.findPiece(whitePieces));
-                                }
-                            }
-                       // }
-                    else {
-                        return false;
-                    }
-                } else {
-                    //System.out.println("Invalid Move");
-                   // printMovelist(this.possibleMoves(board,this.team()));
-                    return false;
-                }
+                this.takePiece(board, x, y);
+                this.turnCount++;
+                return true;
+            } else {
+                // System.out.println("Invalid Move");
+               Log.d("578","FOUND YOUUUUU");
+                return false;
             }
-       // }
-        this.turnCount++; //increments turn per movement
-        return true;
+        } else { //generic pieces
+            if (target.inMovelist(this.possibleMoves(board, this.team()))) {
+                this.takePiece(board, x, y);
+                this.turnCount++;
+                if (target.isOccupied()) {
+                    if (this.team()) {
+                        //if there was a piece, it finds and removes that piece from the enemy pieces list
+                        blackPieces.remove(target.findPiece(blackPieces));
+                    } else {
+                        whitePieces.remove(target.findPiece(whitePieces));
+                    }
+                }
+                return true;
+            } else {
+                Log.d("589","FOUND YOUUUUU");
+                return false;
+            }
+        }
     }
 
     // getters and setters

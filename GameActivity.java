@@ -1,16 +1,19 @@
 package com.example.onechess;
 
 
+import static java.sql.Types.DOUBLE;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.ImageView;
-import com.google.gson.Gson;
+
 
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,7 +37,10 @@ public class GameActivity extends AppCompatActivity {
             {'B', 'P', ' ', ' ', ' ', ' ', 'p', 'b'},
             {'N', 'P', ' ', ' ', ' ', ' ', 'p', 'n'},
             {'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r'}};
-   private int start_x = -1,start_y = -1,end_x = -1,end_y = -1; //placeholder values for movement
+
+   //summon fish
+    Fish fish = new Fish();
+    private int start_x = -1,start_y = -1,end_x = -1,end_y = -1; //placeholder values for movement
 
     private int turnCount = 0;
     int gameState = 0; //0 if game ongoing, 1 if user won, -1 if user lost, 2 if stalemate
@@ -42,9 +48,7 @@ public class GameActivity extends AppCompatActivity {
     //declaration of white and black pieces
     List<Piece> whitePieces = new ArrayList<>();
     List<Piece> blackPieces = new ArrayList<>();
-
-    private SharedPreferences sharedPreferences;
-    int score = 0;
+    int score;
     /* sends the Score to the loss screen so it can be entered to the MongoDB database
     Intent intent = new Intent(this, DestinationActivity.class);
     intent.putExtra("key", "value"); // replace "key" with your actual key and "value" with actual value
@@ -59,6 +63,7 @@ public class GameActivity extends AppCompatActivity {
         //run on start of activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        Log.d("GAMESTATE",String.valueOf(gameState));
         //initialize grid and pieces
         Intent intent = getIntent();
         //if user came from shop, fill board and score based on that list, otherwise create new
@@ -75,16 +80,22 @@ public class GameActivity extends AppCompatActivity {
         {
             score = (Integer) intent.getIntExtra("score",0);
         }
+        else {
+            score = 0;
+        }
 
         updateGrid();
 
         //creates shop and leaderboard buttons
     }
-
     private void checkGamestate()
     {
+
         boolean whiteKingAlive = whitePieces.get(0).findKings(board);
+        Log.d("IsWhiteKingAlive",String.valueOf(whiteKingAlive));
+        Log.d("BKING",String.valueOf(board[4][7]));
         boolean blackKingAlive = blackPieces.get(0).findKings(board);
+        Log.d("IsBlackKingAlive",String.valueOf(blackKingAlive));
 
         if(whiteKingAlive && blackKingAlive)
         {
@@ -103,17 +114,19 @@ public class GameActivity extends AppCompatActivity {
         if(gameState == 1)
         {
             Intent intentWin = new Intent(GameActivity.this, ShopActivity.class);
-            score = (Integer) ((whitePieces.size())/(turnCount+1)*500 + score);
+            score = (int) ((((double) whitePieces.size()/(turnCount+1)*500 + score)));
             intentWin.putExtra("score",score);
             intentWin.putExtra("pieceList",(Serializable) whitePieces);
             startActivity(intentWin);
+            finish();
         }
         else if(gameState == -1)
         {
             Intent intentLoss = new Intent(GameActivity.this, LossActivity.class);
-            score = (Integer) ((whitePieces.size())/(turnCount+1)*500 + score);
+            score = (int) ((((double)whitePieces.size())/(turnCount+1)*500 + score));
             intentLoss.putExtra("score", score);
             startActivity(intentLoss);
+            finish();
         }
     }
     private void fillBoard()
@@ -172,6 +185,16 @@ public class GameActivity extends AppCompatActivity {
             }
         }
     }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();  // Always call the superclass
+        whitePieces.clear();
+        blackPieces.clear();
+
+        // Stop method tracing that the activity started during onCreate()
+        android.os.Debug.stopMethodTracing();
+    }
+
     private void updateGrid() {
         //creates table layout
         TableLayout tableLayout = findViewById(R.id.imageGrid);
@@ -219,9 +242,20 @@ public class GameActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         // Handle the click event
-                        System.out.println("Updated:" + x + y);
                         handlePieceClick(x, y);
                         checkGamestate();
+                        Log.d("GAMESTATE",String.valueOf(gameState));
+                        //refresh click
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            public void run() {
+                                // Code to execute after some delay
+                                botMove();
+                            }
+                        }, 500); // The delay in milliseconds, 5000ms = 5 seconds
+
+
+
                     }
                 });
             }
@@ -243,7 +277,7 @@ public class GameActivity extends AppCompatActivity {
                 {
                     whitePieces.add(Space);
                 }
-                else if (Space.isOccupied())
+                else if (Space.isOccupied() && !Space.team())
                 {
                     blackPieces.add(Space);
                 }
@@ -255,52 +289,69 @@ public class GameActivity extends AppCompatActivity {
             Log.d("Turncount",String.valueOf(turnCount));
 
             // if the start was not chosen, set the values
-            if(start_x == -1)
-            {
-                if(board[x][y] != ' ') {
-                    start_x = x;
-                    start_y = y;
-                }
-            }
-            else
-            { //if start was chosen, pick end values and call the handleMovement function
-                end_x = x;
-                end_y = y;
+                if (start_x == -1 && (turnCount % 2 == 0)) {
+                    if (board[x][y] != ' ') { ////////
+                        start_x = x;
+                        start_y = y;
+                    }
+                } else if((turnCount % 2 == 0)) { //if start was chosen, pick end values and call the handleMovement function
+                    end_x = x;
+                    end_y = y;
 
-                Piece chosenPiece = new Piece(board,start_x,start_y);
-                List<Piece> teamPieces = (chosenPiece.team()) ? whitePieces:blackPieces;
-                chosenPiece.setTurnCount(teamPieces.get(chosenPiece.findPiece(teamPieces)).getTurnCount());
-                if((turnCount % 2 == 0 && chosenPiece.team()) || (turnCount % 2 != 0 && !chosenPiece.team())) {
-                    //removes the old version from piece list for updating
-                    if (chosenPiece.team()) {
-                        whitePieces.remove(chosenPiece.findPiece(whitePieces));
-                    } else {
-                        blackPieces.remove(chosenPiece.findPiece(blackPieces));
+                    Piece chosenPiece = new Piece(board, start_x, start_y);
+                    if(chosenPiece.team()) {
+                        List<Piece> teamPieces = (chosenPiece.team()) ? whitePieces : blackPieces;
+                        chosenPiece.setTurnCount(teamPieces.get(chosenPiece.findPiece(teamPieces)).getTurnCount());
+                        //removes the old version from piece list for updating
+                        if (chosenPiece.team()) {
+                            whitePieces.remove(chosenPiece.findPiece(whitePieces));
+                        } else {
+                            blackPieces.remove(chosenPiece.findPiece(blackPieces));
+                        }
+                        valid = chosenPiece.handleMovement(board, end_x, end_y, whitePieces, blackPieces);
+                        //re-adds new pieces
+                        if (chosenPiece.team()) {
+                            whitePieces.add(chosenPiece);
+                        } else {
+                            blackPieces.add(chosenPiece);
+                        }
+                        if (valid) {
+                            turnCount++;
+                        }
                     }
-                    valid = chosenPiece.handleMovement(board, end_x, end_y, whitePieces, blackPieces);
-                    Log.d("Valid",String.valueOf(valid));
-                    //re-adds new pieces
-                    if (chosenPiece.team()) {
-                        whitePieces.add(chosenPiece);
-                    } else {
-                        blackPieces.add(chosenPiece);
-                    }
-                    if(valid) {turnCount++;}
-                }
-                else {
-                    
-                }
+
+
                     //move is over, reset values, update grid
                     start_x = -1;
                     start_y = -1;
                     clearGrid();
                     updateGrid();
-
+                }
             }
 
-            // Perform actions based on the clicked piece
-        }
 
+            // Perform actions based on the clicked piece
+    public void botMove()
+    {
+        boolean valid = false;
+        if(turnCount % 2 != 0) {
+            while(!valid)
+            {
+                Piece tempPiece = blackPieces.get((int) Math.floor(Math.random()*(blackPieces.size()-1)));
+                Log.d("Black Chosen Piece",String.valueOf(tempPiece.getPiece()));
+                List<Piece> tempMoveList = tempPiece.possibleMoves(board,false);
+                if(tempMoveList.size() != 0) {
+                    Piece movePiece = tempMoveList.get((int) Math.floor(Math.random() * (tempMoveList.size()-1)));
+                    valid = tempPiece.handleMovement(board, movePiece.getPosX(), movePiece.getPosY(), whitePieces, blackPieces);
+                }
+            }
+
+
+            if (valid) {
+                turnCount++;
+            }
+        }
+    }
     private void setImageResource(ImageView imageView, char value) {
         // Set image resource based on the char value
         // You need to define the logic for mapping char values to image resources

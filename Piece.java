@@ -1,5 +1,4 @@
 package com.example.onechess;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,28 +22,19 @@ public class Piece implements Serializable {
         this.turnCount = 0;
     }
 
-    public static void drawBoard(char[][] board) {
-        for (int j = 7; j > -1; j--) {
-            for (int i = 0; i < 8; i++) {
-                System.out.print(board[i][j] + " ");
-            }
-            System.out.println();
-        }
-    }
-
-    public Piece(char piece, int x, int y) {
-        // constructor,self-explanatory
-        this.piece = piece;
-        this.pos_x = x;
-        this.pos_y = y;
-        this.turnCount = 0;
+    public Piece(char piece,int x,int y){
+//constructor,self-explanatory
+        this.piece=piece;
+        this.pos_x=x;
+        this.pos_y=y;
+        this.turnCount=0;
     }
 
     public String toString() {
         return piece + " " + pos_x + " " + pos_y; // returns components as string
     }
 
-    public boolean equals(Piece piece1) { // checks if two pieces are equal
+    public boolean equals(Piece piece1) { //checks if two pieces are equal
         if ((this.piece == piece1.piece) && (this.pos_x == piece1.pos_x) && (this.pos_y == piece1.pos_y)) {
             return true;
         } else {
@@ -141,7 +131,7 @@ public class Piece implements Serializable {
                 x = this.pos_x - i;
                 y = this.pos_y - i;
                 if ((x > -1) && (x < 8) && (y > -1) && (y < 8)) {
-                    Piece space = new Piece(board, x, y);
+                    Piece space = new Piece(board,x, y);
                     if (!space.isOccupied()) {
                         allMovements.add(space);
                     } else if (space.team() != this.team()) {
@@ -174,10 +164,7 @@ public class Piece implements Serializable {
         return allMovements;
     }
 
-    public List<Piece> checkKing(char[][] board, List<Piece> whitePieces, List<Piece> blackPieces) { // returns a list
-                                                                                                     // of all possible
-                                                                                                     // moves for the
-                                                                                                     // king
+    public List<Piece> checkKing(char[][] board, List<Piece> whitePieces, List<Piece> blackPieces) { //returns a list of all possible moves for the king
         List<Piece> unCheckedList = new ArrayList<>();
         List<Piece> movementList = new ArrayList<>();
 
@@ -193,7 +180,8 @@ public class Piece implements Serializable {
                     {
                         Piece space = new Piece(board, this.pos_x + i, this.pos_y + j);
 
-                        if (!space.isOccupied() || space.team() != this.team()) {
+                        if(!space.isOccupied() || space.team() != this.team())
+                        {
                             unCheckedList.add(space);
                         }
                     }
@@ -201,35 +189,36 @@ public class Piece implements Serializable {
             }
         }
 
+
         List<Piece> pieceList = (this.team()) ? blackPieces : whitePieces;
+
 
         for (int i = 0; i < unCheckedList.size(); i++) // iterates through unchecked list for possible moves
         {
             found = false;
-            if (!(unCheckedList.get(i).isOccupied()) || (unCheckedList.get(i).team() != this.team())) // if its not
-                                                                                                      // occupied or the
-                                                                                                      // opposite team
+            if (!(unCheckedList.get(i).isOccupied()) || (unCheckedList.get(i).team() != this.team())) // if its not occupied or the opposite team
 
             {
                 tempPiece = unCheckedList.get(i).piece;
                 unCheckedList.get(i).piece = this.piece;
 
-                board[unCheckedList.get(i).pos_x][unCheckedList.get(i).pos_y] = this.piece; // place temporary king
+                board[unCheckedList.get(i).pos_x][unCheckedList.get(i).pos_y] = this.piece; //place temporary king
                 for (int j = 0; j < pieceList.size(); j++) // checks if possible moves are currently under attack and
                 // thus not valid
                 {
                     List<Piece> enemyMoveList = new ArrayList<>();
-                    enemyMoveList = pieceList.get(j).possibleMoves(board, !this.team());
+                    enemyMoveList = pieceList.get(j).possibleMoves(board,!this.team());
                     if (unCheckedList.get(i).inMovelist(enemyMoveList)) // if its in there, then NO
                     {
-                        if (pieceList.get(j).piece == 'k' || pieceList.get(j).piece == 'K') // if checking the enemy
-                                                                                            // king, check to see if the
-                                                                                            // kings are far enough away
+                        if(pieceList.get(j).piece == 'k' || pieceList.get(j).piece == 'K') //if checking the enemy king, check to see if the kings are far enough away
                         {
-                            if (unCheckedList.get(i).kingsTooClose(enemyMoveList.get(j))) {
+                            //if(unCheckedList.get(i).kingsTooClose(enemyMoveList.get(j)))
+                           // {
                                 found = true;
-                            }
-                        } else {
+                           // }
+                        }
+                        else
+                        {
                             found = true;
                         }
                     }
@@ -242,38 +231,52 @@ public class Piece implements Serializable {
             }
 
         }
-        //drawBoard(board);
         // iterate through all Pieces in Piece list and check to see which of the King's
         // possible moves are in those, if all of them ar
         return movementList;
     }
 
-    public List<Piece> findKings(char[][] board) {
-
-        List<Piece> kings = new ArrayList<>();
-        kings.add(new Piece(board, 0, 0));
-        kings.add(new Piece(board, 0, 0));
+    public boolean findKings(char[][] board) {
+        char king = (this.team()) ? 'K' : 'k';
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (board[i][j] == 'k') {
-                    kings.get(1).setPiece('k');
-                    kings.get(1).setPosX(i);
-                    kings.get(1).setPosY(j);
-                } else if (board[i][j] == 'K') {
-                    kings.get(0).setPiece('K');
-                    kings.get(0).setPosX(i);
-                    kings.get(0).setPosY(j);
+                if (board[i][j] == king) {
+                    return true;
                 }
-
             }
+        }
+        return false;
+    }
 
+    /*public int inCheck(char[][] board, List<Piece> whitePieces, List<Piece> blackPieces){
+        //function creates a list of all the possible moves on the board, and if the king is a target in that movelist
+        //inCheck == 1 if white in check
+        //inCheck == -1 if black in check
+        //inCheck == 0 if no check
+
+        List<Piece> moveList = new ArrayList<>();
+        List<Piece> kings = new ArrayList<>();
+        kings = findKings(board);
+
+        for(int i = 0; i<whitePieces.size(); i++){
+            moveList.addAll(whitePieces.get(i).possibleMoves(board,this.team()));
+        }
+        for(int i = 0; i<blackPieces.size(); i++){
+            moveList.addAll(blackPieces.get(i).possibleMoves(board,this.team()));
         }
 
-        // System.out.println(kings.get(0));
-        // System.out.println(kings.get(1));
-        return kings;
+        if (kings.get(0).inMovelist(moveList)){
+            //    this.printMovelist(moveList);
+            return 1;
+        }
+        else if (kings.get(1).inMovelist(moveList)){
+            //this.printMovelist(moveList);
+            return -1;
+        }
+        // this.printMovelist(moveList);
+        return 0;
+    }*/
 
-    }
 
     public List<Piece> checkCross(char[][] board) { // checks all possible movement spaces for a piece that moves in a
         // cross formation(ie rook queen)
@@ -402,7 +405,7 @@ public class Piece implements Serializable {
             direction = -1;
         }
 
-        if (this.team() == team) {
+        if(this.team() == team) {
 
             if ((this.pos_y + (direction * 1) < 8) && ((this.pos_y + (direction * 1) > -1))) {
                 Piece move = new Piece(board, this.pos_x,
@@ -412,7 +415,7 @@ public class Piece implements Serializable {
                 }
             }
 
-            if ((this.pos_y + (direction * 2) < 8) && ((this.pos_y + (direction * 2) > -1))) { // initial move
+            if ((this.pos_y + (direction * 2) < 8) && ((this.pos_y + (direction * 2) > -1))) { //initial move
                 Piece moveInitial = new Piece(board, this.pos_x,
                         this.pos_y + (direction * 2));
                 if ((this.turnCount == 0) && (!moveInitial.isOccupied())) {
@@ -421,7 +424,8 @@ public class Piece implements Serializable {
             }
         }
 
-        if ((this.pos_y + (direction * 1) < 8) && ((this.pos_y + (direction * 1) > -1))) { // taking enemy piece
+
+        if ((this.pos_y + (direction * 1) < 8) && ((this.pos_y + (direction * 1) > -1))) { //taking enemy piece
             if ((this.pos_x + 1 < 8) && (this.pos_x + 1 > -1)) {
 
                 Piece takeR = new Piece(board, this.pos_x + 1,
@@ -432,7 +436,7 @@ public class Piece implements Serializable {
             }
         }
 
-        if ((this.pos_y + (direction * 1) < 8) && ((this.pos_y + (direction * 1) > -1))) { // taking enemy piece
+        if ((this.pos_y + (direction * 1) < 8) && ((this.pos_y + (direction * 1) > -1))) { //taking enemy piece
             if ((this.pos_x - 1 < 8) && (this.pos_x - 1 > -1)) {
                 Piece takeL = new Piece(board, this.pos_x - 1,
                         this.pos_y + (direction * 1));
@@ -443,55 +447,40 @@ public class Piece implements Serializable {
             }
         }
 
+
         return moveList;
     }
 
-    public boolean checkDiscoverValid(char[][] board, Piece move, List<Piece> whitePieces, List<Piece> blackPieces) { // Determines
-                                                                                                                      // if
-                                                                                                                      // a
-                                                                                                                      // move
-                                                                                                                      // is
-                                                                                                                      // valid
-                                                                                                                      // by
-                                                                                                                      // checking
-                                                                                                                      // if
-                                                                                                                      // it
-                                                                                                                      // cause
-                                                                                                                      // the
-                                                                                                                      // teams
-                                                                                                                      // king
-                                                                                                                      // to
-                                                                                                                      // go
-                                                                                                                      // into
-                                                                                                                      // Check
-        // true if valid, false if not
+   /* public boolean checkDiscoverValid(char[][] board, Piece move, List<Piece> whitePieces, List<Piece> blackPieces) { //Determines if a move is valid by checking if it cause the teams king to go into Check
+        //true if valid, false if not
 
-        // moves the piece and sets old place to blank for checking
+        //moves the piece and sets old place to blank for checking
         char tempPiece;
         boolean valid = true;
         int moveIndex = 0;
         List<Piece> enemyPieceList;
         List<Piece> ownPieceList;
-        // sets index at 0 or 1 for findKings: {whiteKing,blackKing}
+        //sets index at 0 or 1 for findKings: {whiteKing,blackKing}
         int kingIndex = (this.team()) ? 0 : 1;
         Piece king;
         enemyPieceList = (this.team()) ? blackPieces : whitePieces;
         ownPieceList = (this.team()) ? whitePieces : blackPieces;
-        // makes temporary move for inCheck
-        if (move.isOccupied()) {
-            moveIndex = move.findPiece(enemyPieceList);
-            enemyPieceList.get(moveIndex).setPiece(this.piece);
+        //makes temporary move for inCheck
+        if(move.isOccupied())
+        {
+           moveIndex = move.findPiece(enemyPieceList);
+           enemyPieceList.get(moveIndex).setPiece(this.piece);
         }
         tempPiece = move.getPiece();
         move.setPiece(this.piece);
         board[move.getPosX()][move.getPosY()] = this.piece;
         board[this.getPosX()][this.getPosY()] = ' ';
         this.setPiece(' ');
-        // picks which is enemy and itself
-        //drawBoard(board);
-        // gets own teams king using kingindex
+        //picks which is enemy and itself
+
+        //gets own teams king using kingindex
         king = findKings(board).get(kingIndex);
-        // if king is in the movelist of any enemy, nonvalid
+        //if king is in the movelist of any enemy, nonvalid
         for (int j = 0; j < enemyPieceList.size(); j++) {
             List<Piece> enemyMoveList = new ArrayList<>();
             enemyMoveList = enemyPieceList.get(j).possibleMoves(board, !this.team());
@@ -502,18 +491,19 @@ public class Piece implements Serializable {
         // if white moved and now white is in check, nonvalid
 
         // undoes move
-        if (move.isOccupied()) {
+        if(move.isOccupied())
+        {
             enemyPieceList.get(moveIndex).setPiece(tempPiece);
         }
         this.setPiece(move.getPiece());
-        board[this.getPosX()][this.getPosY()] = this.piece;
-        board[move.getPosX()][move.getPosY()] = tempPiece;
-        move.setPiece(tempPiece);
-        //System.out.println("DISCOVERYCHECK");
-        //drawBoard(board);
+        board[this.getPosX()][this.getPosY()]=this.piece;
+        board[move.getPosX()][move.getPosY()]=tempPiece;move.setPiece(tempPiece);
+
         return valid;
 
-    }
+    }*/
+
+
 
     public boolean inMovelist(List<Piece> moveList) { // searches movelist to see if an attempted move exists
         for (int i = 0; i < moveList.size(); i++) {
@@ -525,8 +515,7 @@ public class Piece implements Serializable {
         return false;
     }
 
-    public int findPiece(List<Piece> moveList) { // searches movelist to see if an attempted move is valid and returns
-                                                 // the index, -1 if not found
+    public int findPiece(List<Piece> moveList) { // searches movelist to see if an attempted move is valid and returns the index, -1 if not found
         for (int i = 0; i < moveList.size(); i++) {
             if ((this.piece == moveList.get(i).piece) && (this.pos_x == moveList.get(i).pos_x)
                     && (this.pos_y == moveList.get(i).pos_y)) {
@@ -536,7 +525,7 @@ public class Piece implements Serializable {
         return -1;
     }
 
-    public List<Piece> possibleMoves(char[][] board, boolean team_turn) { // generic possible moves function
+    public List<Piece> possibleMoves(char[][] board, boolean team_turn) { //generic possible moves function
         List<Piece> moveList = new ArrayList<>();
 
         switch (this.piece) {
@@ -559,81 +548,21 @@ public class Piece implements Serializable {
                 break;
             case 'p':
             case 'P':
-                moveList = checkPawn(board, team_turn);
+                moveList = checkPawn(board,team_turn);
                 break;
         }
 
         return moveList;
     }
 
-    public void printMovelist(List<Piece> moveList) { // prints entire list
+    public void printMovelist(List<Piece> moveList) { //prints entire list
         for (int i = 0; i < moveList.size(); i++) {
             System.out.println(moveList.get(i));
         }
     }
 
-    public int stalemateOrCheckmate(char[][] board, List<Piece> whitePieces, List<Piece> blackPieces)
-    { //returns 0 if neither, 1 if checkmate, -1 if stalemate
-            // Check if the king is in check
 
-    List<Piece> enemyPieceList = (this.team()) ? blackPieces : whitePieces;
-    List<Piece> ownPieceList = (this.team()) ? whitePieces : blackPieces;
-    boolean movesLeft = false;
-    boolean kingInCheck = false;
-    // checking if theres any valid moves for your team
-    checkLoop:for(
-    int i = 0;i<ownPieceList.size();i++)
-    {
-        List<Piece> unCheckedList = ownPieceList.get(i).possibleMoves(board, this.team());
-        List<Piece> checkedList = new ArrayList<>();
-
-        for (int j = 0; j < unCheckedList.size(); j++) {
-            if (ownPieceList.get(i).checkDiscoverValid(board, unCheckedList.get(j), whitePieces, blackPieces)) { // if
-                                                                                                                 // it
-                                                                                                                 // prevents
-                                                                                                                 // check
-                                                                                                                 // then
-                                                                                                                 // its
-                                                                                                                 // valid
-                checkedList.add(unCheckedList.get(j));
-            }
-        }
-        // System.out.println("MOVES LEFT:" + ownPieceList.get(i));
-        printMovelist(checkedList);
-        if (checkedList.size() != 0) {
-            movesLeft = true;
-            break checkLoop;
-        }
-
-    }
-    // if not, then checks if king is in check
-    if(!movesLeft)
-    {
-        int kingIndex = (this.team()) ? 0 : 1;
-        Piece king;
-        king = findKings(board).get(kingIndex);
-        for (int j = 0; j < enemyPieceList.size(); j++) {
-            List<Piece> enemyMoveList = new ArrayList<>();
-            enemyMoveList = enemyPieceList.get(j).possibleMoves(board, !this.team());
-            if (king.inMovelist(enemyMoveList)) {
-                kingInCheck = true;
-            }
-        }
-    }System.out.println("Check?: "+kingInCheck);if(movesLeft)
-    {
-        return 0; // neither
-    }else
-    {
-        if (kingInCheck) {
-            return 1; // checkmate
-        } else {
-            return -1; // stalemate
-        }
-    }
-
-    } 
-
-    public boolean handleMovement(char[][] board, int x, int y, List<Piece> whitePieces, List<Piece> blackPieces, Piece TakenPiece) {
+    public boolean handleMovement(char[][] board, int x, int y, List<Piece> whitePieces, List<Piece> blackPieces) {
         // moves pieces across board and
         // takes pieces
 
@@ -651,20 +580,16 @@ public class Piece implements Serializable {
         //creates piece object for the target spot
         Piece target = new Piece(board, x, y);
 
-        if(target.piece != 'k' && target.piece != 'K' && this.piece != ' ')
-        {
+       // if(target.piece != 'k' && target.piece != 'K' && this.piece != ' ')
+       // {
 
             if (this.piece == 'k' || this.piece == 'K') { //king checking
                 if (target.inMovelist(this.checkKing(board, whitePieces,blackPieces))) { //
-                    System.out.println(target.inMovelist(this.checkKing(board, whitePieces,blackPieces)));
-                    System.out.println("King's moves:");
-                    System.out.println(this.checkKing(board,whitePieces,blackPieces));
+                   // System.out.println(target.inMovelist(this.checkKing(board, whitePieces,blackPieces)));
+                   // System.out.println("King's moves:");
+                   // System.out.println(this.checkKing(board,whitePieces,blackPieces));
 
                     if (target.isOccupied()) {
-
-                        TakenPiece.setPiece(target.piece);
-                        TakenPiece.setPosX(target.pos_x);
-                        TakenPiece.setPosY(target.pos_y);
 
                         if(this.team()){
                             //if there was a piece, it finds and removes that piece from the enemy pieces list
@@ -677,18 +602,19 @@ public class Piece implements Serializable {
                     this.takePiece(board, x, y);
 
                 } else {
-                    System.out.println("Invalid Move");
+                   // System.out.println("Invalid Move");
                     return false;
 
                 }
             } else { //generic pieces
-    
+               // System.out.println("Target Piece");
+                //System.out.println(target);
+              //  System.out.println("");
 
                 if (target.inMovelist(this.possibleMoves(board, this.team() ))) {
-                    TakenPiece.setPiece(target.piece);
-                    TakenPiece.setPosX(target.pos_x);
-                    TakenPiece.setPosY(target.pos_y);
-                    if(this.checkDiscoverValid(board,target,whitePieces,blackPieces)) {
+                   // System.out.println("Possible Moves");
+                   // printMovelist(this.possibleMoves(board,this.team()));
+                    //if(this.checkDiscoverValid(board,target,whitePieces,blackPieces)) {
                             this.takePiece(board, x, y);
 
                             if (target.isOccupied()) {
@@ -699,17 +625,17 @@ public class Piece implements Serializable {
                                     whitePieces.remove(target.findPiece(whitePieces));
                                 }
                             }
-                        }
+                       // }
                     else {
                         return false;
                     }
                 } else {
-                    System.out.println("Invalid Move");
-                    printMovelist(this.possibleMoves(board,this.team()));
+                    //System.out.println("Invalid Move");
+                   // printMovelist(this.possibleMoves(board,this.team()));
                     return false;
                 }
             }
-        }
+       // }
         this.turnCount++; //increments turn per movement
         return true;
     }

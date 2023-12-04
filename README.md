@@ -3,7 +3,7 @@ EC327 Final Project
 By Amado Diallo, Bogdan Sadikovic, Loren Moreira, Connor Casey
 
 # Blunder: Android Studio Java-based Rogue-like Chess App
-Blunder Logo: 
+ 
 ![Blunder Logo](lil_guy.png)
 
 Blunder is a unique take on the classic game of chess, merging elements of a rogue-like game with strategic chess gameplay. Developed in Android Studio using Java, this app introduces exciting features that differentiate it from traditional chess.

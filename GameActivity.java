@@ -4,6 +4,7 @@ package com.example.onechess;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TableLayout;
@@ -17,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,13 +37,14 @@ public class GameActivity extends AppCompatActivity {
    private int start_x = -1,start_y = -1,end_x = -1,end_y = -1; //placeholder values for movement
 
     private int turnCount = 0;
+    int gameState = 0; //0 if game ongoing, 1 if user won, -1 if user lost, 2 if stalemate
 
     //declaration of white and black pieces
     List<Piece> whitePieces = new ArrayList<>();
     List<Piece> blackPieces = new ArrayList<>();
 
     private SharedPreferences sharedPreferences;
-
+    int score = 0;
     /* sends the Score to the loss screen so it can be entered to the MongoDB database
     Intent intent = new Intent(this, DestinationActivity.class);
     intent.putExtra("key", "value"); // replace "key" with your actual key and "value" with actual value
@@ -58,39 +61,117 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
         //initialize grid and pieces
         Intent intent = getIntent();
-
-        /*if (intent.hasExtra("pieceList")) {
+        //if user came from shop, fill board and score based on that list, otherwise create new
+        if (intent.hasExtra("pieceList")) {
             // Get the list from the Intent
             whitePieces = (List<Piece>) intent.getSerializableExtra("pieceList");
+            initializePieceList(false);
+            fillBoard();
         } else {
             // Initialize a new list
             initializePieceList(true);
-        } */
+        }
+        if(intent.hasExtra("score"))
+        {
+            score = (Integer) intent.getIntExtra("score",0);
+        }
+
         updateGrid();
-        initializePieceList(true);
 
         //creates shop and leaderboard buttons
-        Button shopButton = findViewById(R.id.quitButton);
-        shopButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Start the ChessSetupActivity
-                Intent intent = new Intent(GameActivity.this, ShopActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        Button leaderboardButton = findViewById(R.id.leaderboardButton);
-        leaderboardButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Start the ChessSetupActivity
-                Intent intent = new Intent(GameActivity.this, LeaderboardActivity.class);
-                startActivity(intent);
-            }
-        });
     }
 
+    private void checkGamestate()
+    {
+        boolean whiteKingAlive = whitePieces.get(0).findKings(board);
+        boolean blackKingAlive = blackPieces.get(0).findKings(board);
+
+        if(whiteKingAlive && blackKingAlive)
+        {
+            gameState = 0;
+        }
+        else if(whiteKingAlive)
+        {
+            gameState = 1;
+        }
+        else if(blackKingAlive)
+        {
+            gameState = -1;
+        }
+
+
+        if(gameState == 1)
+        {
+            Intent intentWin = new Intent(GameActivity.this, ShopActivity.class);
+            score = (Integer) ((whitePieces.size())/(turnCount+1)*500 + score);
+            intentWin.putExtra("score",score);
+            intentWin.putExtra("pieceList",(Serializable) whitePieces);
+            startActivity(intentWin);
+        }
+        else if(gameState == -1)
+        {
+            Intent intentLoss = new Intent(GameActivity.this, LossActivity.class);
+            score = (Integer) ((whitePieces.size())/(turnCount+1)*500 + score);
+            intentLoss.putExtra("score", score);
+            startActivity(intentLoss);
+        }
+    }
+    private void fillBoard()
+    {//fills board with players pieces
+        //clears default white pieces
+        for(int i = 0; i < 8;i++)
+        {
+            for(int j = 0; j < 2; j++)
+            {
+                board[i][j] = ' ';
+            }
+        }
+        int pawnCount = 0;
+        int knightCount = 0;
+        int bishopCount = 0;
+        int rookCount = 0;
+        //fills pieces left to right
+        for(int i = 0; i < whitePieces.size(); i++)
+        {
+            switch(whitePieces.get(i).getPiece())
+            {
+                case 'K':
+                    board[4][0] = 'K';
+                    whitePieces.get(i).setPosX(4);
+                    whitePieces.get(i).setPosY(0);
+                    break;
+                case 'Q':
+                    board[3][0] = 'Q';
+                    whitePieces.get(i).setPosX(3);
+                    whitePieces.get(i).setPosY(0);
+                    break;
+                case 'R':
+                    board[0+rookCount][0] = 'R';
+                    whitePieces.get(i).setPosX(0+rookCount);
+                    whitePieces.get(i).setPosY(0);
+                    rookCount+=7;
+                    break;
+                case 'B':
+                    board[2+bishopCount][0] = 'B';
+                    whitePieces.get(i).setPosX(2+bishopCount);
+                    whitePieces.get(i).setPosY(0);
+                    bishopCount+=3;
+                    break;
+                case 'N':
+                    board[1+knightCount][0] = 'N';
+                    whitePieces.get(i).setPosX(1+knightCount);
+                    whitePieces.get(i).setPosY(0);
+                    knightCount+=5;
+                    break;
+                case 'P':
+                    board[0+pawnCount][1] = 'P';
+                    whitePieces.get(i).setPosX(0+pawnCount);
+                    whitePieces.get(i).setPosY(1);
+                    pawnCount++;
+                    break;
+            }
+        }
+    }
     private void updateGrid() {
         //creates table layout
         TableLayout tableLayout = findViewById(R.id.imageGrid);
@@ -140,6 +221,7 @@ public class GameActivity extends AppCompatActivity {
                         // Handle the click event
                         System.out.println("Updated:" + x + y);
                         handlePieceClick(x, y);
+                        checkGamestate();
                     }
                 });
             }
@@ -170,6 +252,8 @@ public class GameActivity extends AppCompatActivity {
     }
         private void handlePieceClick(int x, int y) {
             boolean valid;
+            Log.d("Turncount",String.valueOf(turnCount));
+
             // if the start was not chosen, set the values
             if(start_x == -1)
             {
@@ -184,7 +268,8 @@ public class GameActivity extends AppCompatActivity {
                 end_y = y;
 
                 Piece chosenPiece = new Piece(board,start_x,start_y);
-
+                List<Piece> teamPieces = (chosenPiece.team()) ? whitePieces:blackPieces;
+                chosenPiece.setTurnCount(teamPieces.get(chosenPiece.findPiece(teamPieces)).getTurnCount());
                 if((turnCount % 2 == 0 && chosenPiece.team()) || (turnCount % 2 != 0 && !chosenPiece.team())) {
                     //removes the old version from piece list for updating
                     if (chosenPiece.team()) {
@@ -193,6 +278,7 @@ public class GameActivity extends AppCompatActivity {
                         blackPieces.remove(chosenPiece.findPiece(blackPieces));
                     }
                     valid = chosenPiece.handleMovement(board, end_x, end_y, whitePieces, blackPieces);
+                    Log.d("Valid",String.valueOf(valid));
                     //re-adds new pieces
                     if (chosenPiece.team()) {
                         whitePieces.add(chosenPiece);
@@ -200,6 +286,9 @@ public class GameActivity extends AppCompatActivity {
                         blackPieces.add(chosenPiece);
                     }
                     if(valid) {turnCount++;}
+                }
+                else {
+                    
                 }
                     //move is over, reset values, update grid
                     start_x = -1;

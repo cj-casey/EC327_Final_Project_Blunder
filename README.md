@@ -20,7 +20,7 @@ Blunder introduces slight rule modifications:
 
 ### King's Fate: Unlike conventional chess, the game can be instantly won or lost by eliminating the King.
 ### Frog's Hop: Pawns have a unique "hop" feature, allowing them to traverse over pieces during their initial two-space movement.
-4. Shop for Piece Redemption
+###4. Shop for Piece Redemption
 After losing a match, players can use earned currency to buy back lost pieces from the shop, adding a strategic layer to subsequent games.
 
 ## 5. Leaderboard and Scoring
@@ -38,9 +38,18 @@ Contributions are welcome! Feel free to fork this repository, make changes, and 
 
 Future Enhancements
 Improved AI 
-Screenshots (if available)
-Screenshot 1
-Screenshot 2
+
+### Main Menu
+![Main Menu](Main_Menu.png)
+### Game Board
+![Game Board](GameBoard.png)
+### Shop Screen
+![ShopScreen](ShopScreen.png)
+### Death Screen
+![DeathScreen](DeathScreen.png)
+### Leader Board
+![LeaderBoard](LeaderBoard.png)
+
 
 
 

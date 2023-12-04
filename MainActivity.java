@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -14,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+      //  Mongo.INSTANCE.ping();
 
         Button startButton = findViewById(R.id.startButton);
         startButton.setOnClickListener(new View.OnClickListener() {
@@ -22,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
                 // Start the ChessSetupActivity
                 Intent intent = new Intent(MainActivity.this, GameActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
     }

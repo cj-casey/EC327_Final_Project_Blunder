@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout"
+        android:layout_width="409dp"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="211dp">
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/enterUserInfo"
+        android:layout_width="371dp"
+        android:layout_height="63dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="124dp"
+        android:backgroundTint="#FF0000"
+        android:fontFamily="@font/press_start_2p"
+        android:gravity="center"
+        android:hint="Enter a Username"
+        android:maxLength="15"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/commentTitle" />
+
+    <TextView
+        android:id="@+id/commentTitle"
+        android:layout_width="328dp"
+        android:layout_height="178dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="32dp"
+        android:fontFamily="@font/press_start_2p"
+        android:gravity="center"
+        android:text="YOU DIED"
+        android:textColor="#000000"
+        android:textSize="75sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/scoreMessage"
+        android:layout_width="370dp"
+        android:layout_height="139dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="1dp"
+        android:fontFamily="@font/press_start_2p"
+        android:gravity="center"
+        android:text="YOU SCORED XXXX POINTS!"
+        android:textColor="#000000"
+        android:textSize="34sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/commentTitle" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="132dp"
+        android:layout_height="207dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="28dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scoreMessage"
+        app:srcCompat="@drawable/lil_guy" />
+
+    <TextView
+        android:id="@+id/gringusMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="156dp"
+        android:layout_marginTop="88dp"
+        android:fontFamily="@font/press_start_2p"
+        android:text="YOU SUCK!"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/enterUserInfo" />
+
+    <Button
+        android:id="@+id/confirmButton"
+        android:layout_width="172dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="36dp"
+        android:backgroundTint="#FF0000"
+        android:fontFamily="@font/press_start_2p"
+        android:text="CONFIRM"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/enterUserInfo" />
+</androidx.constraintlayout.widget.ConstraintLayout>

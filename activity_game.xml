@@ -3,40 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <Button
-        android:id="@+id/leaderboardButton"
-        android:layout_width="176dp"
-        android:layout_height="95dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="528dp"
-        android:background="#4CAF50"
-        android:text="LEADERBOARD"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/quitButton"
-        android:layout_width="176dp"
-        android:layout_height="95dp"
-        android:layout_marginStart="216dp"
-        android:layout_marginTop="528dp"
-        android:background="#4CAF50"
-        android:text="QUIT"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
 
     <TextView
         android:id="@+id/titleView"
-        android:layout_width="351dp"
-        android:layout_height="82dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="4dp"
-        android:text="@string/onechess"
+        android:layout_width="385dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/press_start_2p"
+        android:text="BLUNDER"
         android:textAlignment="center"
         android:textColor="#000000"
-        android:textSize="65sp"
+        android:textSize="48sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -110,5 +90,28 @@
         </TableLayout>
 
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/guideText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/press_start_2p"
+        android:gravity="center"
+        android:text="Take the Enemy King as fast as you can!"
+        android:textColor="#000000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageGridContainer" />
+
+    <TextView
+        android:id="@+id/guideText2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/press_start_2p"
+        android:gravity="center"
+        android:text="Pawns are kind of like frogs, they can hop!"
+        android:textColor="#000000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/guideText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

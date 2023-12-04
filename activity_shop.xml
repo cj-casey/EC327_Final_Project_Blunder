@@ -8,10 +8,10 @@
 
     <ImageView
         android:id="@+id/wizard"
-        android:layout_width="159dp"
-        android:layout_height="220dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
+        android:layout_width="137dp"
+        android:layout_height="168dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="76dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/lil_guy" />
@@ -21,7 +21,8 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="300dp"
+        android:layout_marginTop="256dp"
+        android:clickable="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/b_pawn" />
@@ -31,17 +32,17 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="484dp"
+        android:layout_marginTop="412dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/b_pawn" />
 
     <ImageView
-        android:id="@+id/rook"
+        android:id="@+id/knight"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="300dp"
+        android:layout_marginTop="256dp"
         app:layout_constraintStart_toEndOf="@+id/pawn"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/b_knight" />
@@ -51,7 +52,7 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="484dp"
+        android:layout_marginTop="412dp"
         app:layout_constraintStart_toEndOf="@+id/pawn"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/b_knight" />
@@ -61,8 +62,8 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="300dp"
-        app:layout_constraintStart_toEndOf="@+id/rook"
+        android:layout_marginTop="256dp"
+        app:layout_constraintStart_toEndOf="@+id/knight"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/b_bishop" />
 
@@ -70,18 +71,18 @@
         android:id="@+id/playerBishop"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="484dp"
-        app:layout_constraintStart_toEndOf="@+id/rook"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="412dp"
+        app:layout_constraintStart_toEndOf="@+id/knight"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/b_bishop" />
 
     <ImageView
-        android:id="@+id/rook_"
+        android:id="@+id/rook"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="300dp"
+        android:layout_marginTop="256dp"
         app:layout_constraintStart_toEndOf="@+id/bishop"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/b_rook" />
@@ -91,18 +92,18 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="484dp"
+        android:layout_marginTop="412dp"
         app:layout_constraintStart_toEndOf="@+id/bishop"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/b_rook" />
 
     <ImageView
-        android:id="@+id/bishop_"
+        android:id="@+id/queen"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="300dp"
-        app:layout_constraintStart_toEndOf="@+id/rook_"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="256dp"
+        app:layout_constraintStart_toEndOf="@+id/rook"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/b_queen" />
 
@@ -111,8 +112,8 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="484dp"
-        app:layout_constraintStart_toEndOf="@+id/rook_"
+        android:layout_marginTop="412dp"
+        app:layout_constraintStart_toEndOf="@+id/rook"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/b_queen" />
 
@@ -133,10 +134,11 @@
 
     <TextView
         android:id="@+id/pawnCountText"
-        android:layout_width="60dp"
+        android:layout_width="59dp"
         android:layout_height="33dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="196dp"
+        android:layout_marginTop="160dp"
+        android:allowClickWhenDisabled="false"
         android:fontFamily="@font/press_start_2p"
         android:foregroundGravity="center"
         android:gravity="center_horizontal"
@@ -147,7 +149,7 @@
         app:layout_constraintTop_toBottomOf="@+id/pawn" />
 
     <TextView
-        android:id="@+id/pawnPoints2"
+        android:id="@+id/knightPoints"
         android:layout_width="60dp"
         android:layout_height="33dp"
         android:layout_marginStart="16dp"
@@ -166,7 +168,7 @@
         android:layout_width="60dp"
         android:layout_height="33dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="196dp"
+        android:layout_marginTop="160dp"
         android:fontFamily="@font/press_start_2p"
         android:foregroundGravity="center"
         android:gravity="center_horizontal"
@@ -177,7 +179,7 @@
         app:layout_constraintTop_toBottomOf="@+id/pawn" />
 
     <TextView
-        android:id="@+id/pawnPoints3"
+        android:id="@+id/bishopPoints"
         android:layout_width="60dp"
         android:layout_height="33dp"
         android:layout_marginStart="16dp"
@@ -188,26 +190,26 @@
         android:text="300"
         android:textColor="#000000"
         android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/pawnPoints2"
+        app:layout_constraintStart_toEndOf="@+id/knightPoints"
         app:layout_constraintTop_toBottomOf="@+id/pawn" />
 
     <TextView
         android:id="@+id/bishopCountText"
         android:layout_width="60dp"
         android:layout_height="33dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="196dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="160dp"
         android:fontFamily="@font/press_start_2p"
         android:foregroundGravity="center"
         android:gravity="center_horizontal"
         android:text="0"
         android:textColor="#000000"
         android:textSize="34sp"
-        app:layout_constraintStart_toEndOf="@+id/pawnPoints2"
+        app:layout_constraintStart_toEndOf="@+id/knightPoints"
         app:layout_constraintTop_toBottomOf="@+id/pawn" />
 
     <TextView
-        android:id="@+id/pawnPoints4"
+        android:id="@+id/rookTable"
         android:layout_width="60dp"
         android:layout_height="33dp"
         android:layout_marginStart="16dp"
@@ -218,7 +220,7 @@
         android:text="500"
         android:textColor="#000000"
         android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/pawnPoints3"
+        app:layout_constraintStart_toEndOf="@+id/bishopPoints"
         app:layout_constraintTop_toBottomOf="@+id/pawn" />
 
     <TextView
@@ -226,14 +228,14 @@
         android:layout_width="60dp"
         android:layout_height="33dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="196dp"
+        android:layout_marginTop="160dp"
         android:fontFamily="@font/press_start_2p"
         android:foregroundGravity="center"
         android:gravity="center_horizontal"
         android:text="0"
         android:textColor="#000000"
         android:textSize="34sp"
-        app:layout_constraintStart_toEndOf="@+id/pawnPoints3"
+        app:layout_constraintStart_toEndOf="@+id/bishopPoints"
         app:layout_constraintTop_toBottomOf="@+id/pawn" />
 
     <TextView
@@ -241,21 +243,21 @@
         android:layout_width="60dp"
         android:layout_height="33dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="196dp"
+        android:layout_marginTop="160dp"
         android:fontFamily="@font/press_start_2p"
         android:foregroundGravity="center"
         android:gravity="center_horizontal"
         android:text="0"
         android:textColor="#000000"
         android:textSize="34sp"
-        app:layout_constraintStart_toEndOf="@+id/pawnPoints4"
+        app:layout_constraintStart_toEndOf="@+id/rookTable"
         app:layout_constraintTop_toBottomOf="@+id/pawn" />
 
     <TextView
-        android:id="@+id/pawnPoints10"
+        android:id="@+id/queenPoints"
         android:layout_width="60dp"
         android:layout_height="33dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="12dp"
         android:fontFamily="@font/press_start_2p"
         android:foregroundGravity="center"
@@ -263,7 +265,7 @@
         android:text="900"
         android:textColor="#000000"
         android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/pawnPoints4"
+        app:layout_constraintStart_toEndOf="@+id/rookTable"
         app:layout_constraintTop_toBottomOf="@+id/pawn" />
 
     <TextView
@@ -271,37 +273,75 @@
         android:layout_width="240dp"
         android:layout_height="42dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="8dp"
         android:fontFamily="@font/press_start_2p"
         android:text="Your Inventory:"
         android:textColor="#000000"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pawnPoints2" />
+        app:layout_constraintTop_toBottomOf="@+id/knightPoints" />
 
     <TextView
-        android:id="@+id/inventory2"
-        android:layout_width="240dp"
-        android:layout_height="42dp"
+        android:id="@+id/shopTitle"
+        android:layout_width="357dp"
+        android:layout_height="70dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="248dp"
+        android:layout_marginTop="16dp"
         android:fontFamily="@font/press_start_2p"
-        android:text="Le Gringus Shop:"
+        android:gravity="center"
+        android:text="Le Gringus Shoppe"
         android:textColor="#000000"
-        android:textSize="20sp"
+        android:textSize="34sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/exitButton"
-        android:layout_width="360dp"
+        android:layout_width="413dp"
         android:layout_height="120dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/redd"
+        android:fontFamily="@font/press_start_2p"
         android:text="ENTER THE NEXT FLOOR"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:fontFamily="@font/press_start_2p"
-        android:backgroundTint="@color/wood"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bishopCountText" />
+
+    <TextView
+        android:id="@+id/gringusSpeech"
+        android:layout_width="169dp"
+        android:layout_height="118dp"
+        android:layout_marginStart="200dp"
+        android:layout_marginTop="100dp"
+        android:fontFamily="@font/press_start_2p"
+        android:gravity="center"
+        android:text="Welcome to my shop traveler! Please replenish your goons."
+        android:textColor="#000000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/scoreLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="132dp"
+        android:layout_marginEnd="52dp"
+        android:fontFamily="@font/press_start_2p"
+        android:text="SCORE"
+        android:textColor="#000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gringusSpeech" />
+
+    <TextView
+        android:id="@+id/scoreCount"
+        android:layout_width="108dp"
+        android:layout_height="46dp"
+        android:layout_marginEnd="36dp"
+        android:fontFamily="@font/press_start_2p"
+        android:gravity="center"
+        android:text="9999"
+        android:textColor="#000000"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scoreLabel" />
 </androidx.constraintlayout.widget.ConstraintLayout>

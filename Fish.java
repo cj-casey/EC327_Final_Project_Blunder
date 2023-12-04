@@ -9,7 +9,7 @@ import java.io.*;
 
 
 public class Fish {
-    int MAX_Depth = 2; //This is the maximum amount the algorithm will search through before ending runtime.
+    int MAX_Depth = 3; //This is the maximum amount the algorithm will search through before ending runtime.
 
     int pawn = 1;
     int bishop = 3;
@@ -46,13 +46,13 @@ public class Fish {
 
         return kings;
     }
-/*
-    public int addvalB(findKings.get(1), char[][] board, int x, int y){
-        int numadd = y + x;
+    /*
+        public int addvalB(findKings.get(1), char[][] board, int x, int y){
+            int numadd = y + x;
 
-    }
+        }
 
- */
+     */
     public int eval(char[][] board, int x, int y,List<Piece> blackPieces, List<Piece> whitePieces){
         List<Piece> allPieces = new ArrayList<>();
         allPieces.addAll(whitePieces);
@@ -96,9 +96,6 @@ public class Fish {
         return score;
     }
 
-
-
-
     public BestMove negamax(char[][] board, int x, int y, int depth, double alpha, double beta, List<Piece> whitePieces, List<Piece>blackPieces,boolean checkBlack){
         List<Piece> pieceList = (checkBlack) ? blackPieces:whitePieces;
         BestMove bestMove = new BestMove(Integer.MIN_VALUE, board, 0, 0);
@@ -115,14 +112,16 @@ public class Fish {
             return bestMove;
         }
 
-            checkLoop:
-            for (int j = 0; j < allMovements.size(); j++) {
-                char[][] tempBoard = new char[board.length][];
-                for (int i = 0; i < board.length; i++) {
-                    tempBoard[i] = new char[board[i].length];
-                    System.arraycopy(board[i], 0, tempBoard[i], 0, board[i].length);
-                }
+        checkLoop:
+        for (int j = 0; j < allMovements.size(); j++) {
+            char[][] tempBoard = new char[board.length][];
+            for (int i = 0; i < board.length; i++) {
+                tempBoard[i] = new char[board[i].length];
+                System.arraycopy(board[i], 0, tempBoard[i], 0, board[i].length);
+            }
+            if (allMovements.get(j).handleMovement(tempBoard,allMovements.get(j).getPosX(),allMovements.get(j).getPosY(),whitePieces,blackPieces)){
                 int score = -negamax(tempBoard,allMovements.get(j).getPosX(),allMovements.get(j).getPosY(), depth-1,-beta,-alpha,whitePieces,blackPieces,!checkBlack).score;
+
 
                 if(score > bestMove.score) {
                     bestMove.score = score;
@@ -135,6 +134,8 @@ public class Fish {
                     break checkLoop;  // Beta cut-off
                 }
             }
+        }
+
 
         return bestMove;
     }

@@ -53,36 +53,43 @@ public class Fish {
     }
 
  */
-    public int eval(char[][] board, int x, int y,List<Piece> whitePieces){
-        for(int i = 0; i < whitePieces.size(); i++){
-            switch (board[x][y]){
-                //If pieces are black(friendly to Fish), then they are given positive value
-                case 'p':
-                    score += pawn;
-                case 'n':
-                    score += knight;
-                case 'b':
-                    score += bishop;
-                case 'r':
-                    score += rook;
-                case 'q':
-                    score += queen;
-                case 'k':
-                    score += king;
+    public int eval(char[][] board, int x, int y,List<Piece> blackPieces, List<Piece> whitePieces){
+        List<Piece> allPieces = new ArrayList<>();
+        allPieces.addAll(whitePieces);
+        allPieces.addAll(blackPieces);
+        for(int i = 0; i < allPieces.size(); i++) {
+            if (allPieces.get(i).handleMovement(board, x, y, whitePieces, blackPieces)) {
+                switch (board[x][y]) {
+                    //If pieces are black(friendly to Fish), then they are given positive value
+                    case 'p':
+                        score += pawn;
+                    case 'n':
+                        score += knight;
+                    case 'b':
+                        score += bishop;
+                    case 'r':
+                        score += rook;
+                    case 'q':
+                        score += queen;
+                    case 'k':
+                        score += king;
 
-                //If pieces are white(enemy of Fish), then they are given a negative value
-                case 'P':
-                    score += -(pawn);
-                case 'N':
-                    score += -(knight);
-                case 'B':
-                    score += -(bishop);
-                case 'R':
-                    score += -(rook);
-                case 'Q':
-                    score += -(queen);
-                case 'K':
-                    score += -(king);
+                        //If pieces are white(enemy of Fish), then they are given a negative value
+                    case 'P':
+                        score += -(pawn);
+                    case 'N':
+                        score += -(knight);
+                    case 'B':
+                        score += -(bishop);
+                    case 'R':
+                        score += -(rook);
+                    case 'Q':
+                        score += -(queen);
+                    case 'K':
+                        score += -(king);
+                    case ' ':
+                        score += 5;
+                }
             }
         }
 
@@ -100,7 +107,7 @@ public class Fish {
             allMovements.addAll(pieceList.get(k).possibleMoves(board, !checkBlack));
         }
         if(depth == 0){
-            bestMove.score = eval(board, x, y, whitePieces);
+            bestMove.score = eval(board, x, y,blackPieces,whitePieces);
             bestMove.x = x;
             bestMove.y = y;
             Piece pieceTest = new Piece(board,x,y);

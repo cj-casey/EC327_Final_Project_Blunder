@@ -26,10 +26,10 @@ After losing a match, players can use earned currency to buy back lost pieces fr
 ## 5. Leaderboard and Scoring
 Compete for high scores on the leaderboard! Your rank is determined by a calculated score after each match, considering the number of surviving pieces and the total number of rounds played.
 
-##Meet Gringus!
-Gringus is the "friendly" shopkeep of Blunder, managing the in-game shop and reigning as the top player on the leaderboard. Interact with Gringus as you strategize your game!
+## Meet Gringus!
+Gringus is the "friendly" shopkeep of Blunder and also the villain, managing the in-game shop and reigning as the top player on the leaderboard. Interact with Gringus as you strategize your game!
 
-#Installation and Usage
+# Installation and Usage
 Clone the repository.
 Open the project in Android Studio.
 Run the app on an emulator or Android device.
@@ -51,7 +51,9 @@ Improved AI
 ![LeaderBoard](LeaderBoard.png)
 
 
-
+## Music
+All Music was taken from Yuzo Koshiro's soundtrack for Legacy of the Wizard for the NES
+https://www.youtube.com/watch?v=YNz9vpxw-bk
 
 This project was done by:
 

@@ -5,15 +5,18 @@ import static java.sql.Types.DOUBLE;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.ImageView;
-
+import android.widget.TextView;
 
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +27,10 @@ import com.google.gson.reflect.TypeToken;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -38,16 +44,34 @@ public class GameActivity extends AppCompatActivity {
             {'N', 'P', ' ', ' ', ' ', ' ', 'p', 'n'},
             {'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r'}};
 
-   //summon fish
-    Fish fish = new Fish();
+   private String[] dialogue =
+           {"You don't stand a chance....",
+           "You're a total dweeb..",
+           "You'll never win, just lose..",
+           "You're just a failure...."    ,
+           "You lack what it takes...."   ,
+           "Gringus never blunders...."   ,
+           "Well you blundered it now....",
+           "I'm literally a wizard...."   ,
+           "Do you have a brain? "      ,
+           "This is just a side hustle...",
+           "Can't wait to take your money"};
+
+
+
     private int start_x = -1,start_y = -1,end_x = -1,end_y = -1; //placeholder values for movement
 
+    private int moveCount = 0;
     private int turnCount = 0;
     int gameState = 0; //0 if game ongoing, 1 if user won, -1 if user lost, 2 if stalemate
 
     //declaration of white and black pieces
     List<Piece> whitePieces = new ArrayList<>();
     List<Piece> blackPieces = new ArrayList<>();
+    private MediaPlayer music;
+
+    private static List<MediaPlayer> activePlayers = new ArrayList<>(); //keeps it in a list so garbo collector doesnt feast
+    Fish fish = new Fish();
     int score;
     /* sends the Score to the loss screen so it can be entered to the MongoDB database
     Intent intent = new Intent(this, DestinationActivity.class);
@@ -63,7 +87,7 @@ public class GameActivity extends AppCompatActivity {
         //run on start of activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-        Log.d("GAMESTATE",String.valueOf(gameState));
+
         //initialize grid and pieces
         Intent intent = getIntent();
         //if user came from shop, fill board and score based on that list, otherwise create new
@@ -83,19 +107,22 @@ public class GameActivity extends AppCompatActivity {
         else {
             score = 0;
         }
-
+        MediaPlayer music = new MediaPlayer();
+        startMusic(music);
         updateGrid();
 
         //creates shop and leaderboard buttons
     }
     private void checkGamestate()
     {
-
-        boolean whiteKingAlive = whitePieces.get(0).findKings(board);
-        Log.d("IsWhiteKingAlive",String.valueOf(whiteKingAlive));
-        Log.d("BKING",String.valueOf(board[4][7]));
-        boolean blackKingAlive = blackPieces.get(0).findKings(board);
-        Log.d("IsBlackKingAlive",String.valueOf(blackKingAlive));
+        boolean whiteKingAlive = false;
+        boolean blackKingAlive = false;
+        if(whitePieces.size() != 0) {
+            whiteKingAlive = whitePieces.get(0).findKings(board);
+        }
+        if(blackPieces.size() != 0) {
+            blackKingAlive = blackPieces.get(0).findKings(board);
+        }
 
         if(whiteKingAlive && blackKingAlive)
         {
@@ -112,21 +139,36 @@ public class GameActivity extends AppCompatActivity {
 
 
         if(gameState == 1)
-        {
+        { //draw a round win thingy
             Intent intentWin = new Intent(GameActivity.this, ShopActivity.class);
-            score = (int) ((((double) whitePieces.size()/(turnCount+1)*500 + score)));
+            score = (int) ((((double) whitePieces.size()/(turnCount+1)*1200 + score)));
             intentWin.putExtra("score",score);
             intentWin.putExtra("pieceList",(Serializable) whitePieces);
+            if(activePlayers.size() != 0) {
+            activePlayers.get(0).stop();
+            activePlayers.get(0).release();
+            activePlayers.remove(0);
+            }
             startActivity(intentWin);
             finish();
         }
         else if(gameState == -1)
         {
             Intent intentLoss = new Intent(GameActivity.this, LossActivity.class);
-            score = (int) ((((double)whitePieces.size())/(turnCount+1)*500 + score));
             intentLoss.putExtra("score", score);
+            if(activePlayers.size() != 0) {
+                activePlayers.get(0).stop();
+                activePlayers.get(0).release();
+                activePlayers.remove(0);
+            }
+
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
             startActivity(intentLoss);
             finish();
+                }
+            }, 500);
         }
     }
     private void fillBoard()
@@ -195,8 +237,28 @@ public class GameActivity extends AppCompatActivity {
         android.os.Debug.stopMethodTracing();
     }
 
+    public void startMusic(MediaPlayer music)
+    {
+        int index = (int) (Math.random()*(2));
+
+        switch(index) {
+            case 0:
+            music = MediaPlayer.create(this, R.raw.game_music_1);
+            break;
+            case 1:
+            music = MediaPlayer.create(this, R.raw.game_music_2);
+            break;
+            case 2:
+            music = MediaPlayer.create(this, R.raw.game_music_3);
+        }
+        music.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        music.setLooping(true);
+        activePlayers.add(music);
+        music.start();
+    }
     private void updateGrid() {
         //creates table layout
+        gringusText();
         TableLayout tableLayout = findViewById(R.id.imageGrid);
         //creates array of images to iterate through
         ImageView[][] pieceViews = new ImageView[8][8];
@@ -244,15 +306,7 @@ public class GameActivity extends AppCompatActivity {
                         // Handle the click event
                         handlePieceClick(x, y);
                         checkGamestate();
-                        Log.d("GAMESTATE",String.valueOf(gameState));
                         //refresh click
-                        Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            public void run() {
-                                // Code to execute after some delay
-                                botMove();
-                            }
-                        }, 500); // The delay in milliseconds, 5000ms = 5 seconds
 
 
 
@@ -286,7 +340,6 @@ public class GameActivity extends AppCompatActivity {
     }
         private void handlePieceClick(int x, int y) {
             boolean valid;
-            Log.d("Turncount",String.valueOf(turnCount));
 
             // if the start was not chosen, set the values
                 if (start_x == -1 && (turnCount % 2 == 0)) {
@@ -309,6 +362,7 @@ public class GameActivity extends AppCompatActivity {
                             blackPieces.remove(chosenPiece.findPiece(blackPieces));
                         }
                         valid = chosenPiece.handleMovement(board, end_x, end_y, whitePieces, blackPieces);
+                        moveCount = 0;
                         //re-adds new pieces
                         if (chosenPiece.team()) {
                             whitePieces.add(chosenPiece);
@@ -317,10 +371,16 @@ public class GameActivity extends AppCompatActivity {
                         }
                         if (valid) {
                             turnCount++;
+                            Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                public void run() {
+                                    // Code to execute after some delay
+                                    botMove();
+                                }
+                            }, 500); // The delay in milliseconds, 5000ms = 5 seconds
+
                         }
                     }
-
-
                     //move is over, reset values, update grid
                     start_x = -1;
                     start_y = -1;
@@ -329,26 +389,79 @@ public class GameActivity extends AppCompatActivity {
                 }
             }
 
-
+    public void gringusText()
+    {
+        int randomChoice =(int) (Math.random()*(dialogue.length-1));
+        TextView gringusSpeech = findViewById(R.id.gringusSpeechGame);
+        gringusSpeech.setText(dialogue[randomChoice]);
+    }
             // Perform actions based on the clicked piece
     public void botMove()
     {
         boolean valid = false;
-        if(turnCount % 2 != 0) {
+        if(turnCount % 2 != 0 && moveCount == 0) {
+            Collections.shuffle(blackPieces);
+            //if no possible moves, return false to end game as a stalemate
+            //prioritize king
+            for(int i = 0; i < blackPieces.size();i++)
+            {
+                List<Piece> kingMoveList;
+                if(blackPieces.get(i).getPiece() == 'k')
+                {
+                    kingMoveList = blackPieces.get(i).checkKing(board,whitePieces,blackPieces);
+                }
+                else
+                {
+                    kingMoveList = blackPieces.get(i).possibleMoves(board, false);
+                }
+                    for(int j = 0; j < kingMoveList.size();j++)
+                    {
+                        if(kingMoveList.get(j).getPiece() == 'K')
+                        {
+                            blackPieces.get(i).handleMovement(board,kingMoveList.get(j).getPosX(),kingMoveList.get(j).getPosY(),whitePieces,blackPieces);
+                            moveCount++;
+                            turnCount++;
+                            return;
+                        }
+                    }
+                }
+            //if king cant be taken, it will try to take a piece
+            for(int i = 0; i < blackPieces.size();i++)
+            {
+                List<Piece> takeMoveList;
+                if(blackPieces.get(i).getPiece() == 'k')
+                {
+                    takeMoveList = blackPieces.get(i).checkKing(board,whitePieces,blackPieces);
+                }
+                else
+                {
+                    takeMoveList = blackPieces.get(i).possibleMoves(board, false);
+                }
+                for(int j = 0; j < takeMoveList.size();j++)
+                {
+                    if(takeMoveList.get(j).isOccupied())
+                    {
+                        blackPieces.get(i).handleMovement(board,takeMoveList.get(j).getPosX(),takeMoveList.get(j).getPosY(),whitePieces,blackPieces);
+                        moveCount++;
+                        turnCount++;
+                        return;
+                    }
+                }
+            }
+            //if it cant take a piece, it will move somewhere random
             while(!valid)
             {
                 Piece tempPiece = blackPieces.get((int) Math.floor(Math.random()*(blackPieces.size()-1)));
-                Log.d("Black Chosen Piece",String.valueOf(tempPiece.getPiece()));
                 List<Piece> tempMoveList = tempPiece.possibleMoves(board,false);
                 if(tempMoveList.size() != 0) {
                     Piece movePiece = tempMoveList.get((int) Math.floor(Math.random() * (tempMoveList.size()-1)));
                     valid = tempPiece.handleMovement(board, movePiece.getPosX(), movePiece.getPosY(), whitePieces, blackPieces);
                 }
             }
-
-
             if (valid) {
+                moveCount++;
                 turnCount++;
+                return;
             }
         }
     }

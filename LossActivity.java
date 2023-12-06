@@ -3,6 +3,8 @@ package com.example.onechess;
 import static android.content.Intent.getIntent;
 
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,11 +16,17 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LossActivity extends AppCompatActivity {
 
     final int[] score = new int[1];
     String username;
+
+    private MediaPlayer music;
+
+    private static List<MediaPlayer> activePlayers = new ArrayList<>();
 
     protected void onCreate(Bundle savedInstanceState) {
         //run on start of activity
@@ -26,7 +34,7 @@ public class LossActivity extends AppCompatActivity {
         setContentView(R.layout.activity_loss);
         //initialize grid and pieces
         Intent intent = getIntent();
-
+        startMusic(music);
         if(intent.hasExtra("score")) {
             score[0] = intent.getIntExtra("score", 0);
         }
@@ -66,6 +74,11 @@ public class LossActivity extends AppCompatActivity {
                 Intent intent = new Intent(LossActivity.this, LeaderboardActivity.class);
                 intent.putExtra("username",username);
                 intent.putExtra("score", score[0]);
+                if(activePlayers.size() != 0) {
+                    activePlayers.get(0).stop();
+                    activePlayers.get(0).release();
+                    activePlayers.remove(0);
+                }
                 startActivity(intent);
                 finish();
             }
@@ -74,4 +87,16 @@ public class LossActivity extends AppCompatActivity {
 
 
     }
+    public void startMusic(MediaPlayer music)
+    {
+        int index = (int) (Math.random()*(2));
+        music = MediaPlayer.create(this, R.raw.main_music);
+
+        music.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        music.setLooping(true);
+        activePlayers.add(music);
+        music.start();
+    }
+
+
 }

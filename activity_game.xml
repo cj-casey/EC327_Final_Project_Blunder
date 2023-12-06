@@ -6,28 +6,25 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF">
 
-    <TextView
-        android:id="@+id/titleView"
-        android:layout_width="385dp"
-        android:layout_height="52dp"
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="211dp"
+        android:layout_height="235dp"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="24dp"
-        android:fontFamily="@font/press_start_2p"
-        android:text="BLUNDER"
-        android:textAlignment="center"
-        android:textColor="#000000"
-        android:textSize="48sp"
-        android:textStyle="bold"
+        android:layout_marginTop="4dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/lil_guy" />
 
     <RelativeLayout
         android:id="@+id/imageGridContainer"
         android:layout_width="400dp"
         android:layout_height="400dp"
         android:layout_marginStart="5dp"
+
+        android:layout_marginTop="130dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleView">
+        app:layout_constraintTop_toTopOf="parent">
 
         <!-- Background image -->
         <ImageView
@@ -43,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="18dp"
-            android:layout_marginTop="14dp">
+            android:layout_marginTop="20dp">
 
             <TableRow
                 android:layout_width="match_parent"
@@ -95,23 +92,39 @@
         android:id="@+id/guideText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="548dp"
         android:fontFamily="@font/press_start_2p"
         android:gravity="center"
         android:text="Take the Enemy King as fast as you can!"
         android:textColor="#000000"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageGridContainer" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/guideText2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
         android:fontFamily="@font/press_start_2p"
         android:gravity="center"
         android:text="Pawns are kind of like frogs, they can hop!"
         android:textColor="#000000"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/guideText" />
+
+    <TextView
+        android:id="@+id/gringusSpeechGame"
+        android:layout_width="243dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="155dp"
+        android:layout_marginTop="36dp"
+        android:fontFamily="@font/press_start_2p"
+        android:text="You don't stand a chance...."
+        android:textColor="#000000"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,8 @@
 package com.example.onechess;
 
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,11 +15,17 @@ import com.example.onechess.Piece;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ShopActivity extends AppCompatActivity {
 
-    int pawnCount = 0;
+    private int pawnCount = 0;
+    private MediaPlayer music;
+
+    private static List<MediaPlayer> activePlayers = new ArrayList<>();
+
     protected void onCreate(Bundle savedInstanceState) {
         //run on start of activity
         super.onCreate(savedInstanceState);
@@ -29,7 +37,7 @@ public class ShopActivity extends AppCompatActivity {
 
             List<Piece> playerPieces = (List<Piece>) intent.getSerializableExtra("pieceList");
 
-
+        startMusic(music);
         if(intent.hasExtra("score")) {
             score[0] = intent.getIntExtra("score", 0);
         }
@@ -60,6 +68,11 @@ public class ShopActivity extends AppCompatActivity {
                 Intent intent = new Intent(ShopActivity.this, GameActivity.class);
                 intent.putExtra("pieceList", (Serializable) playerPieces);
                 intent.putExtra("score", score[0]);
+                if(activePlayers.size() != 0) {
+                    activePlayers.get(0).stop();
+                    activePlayers.get(0).release();
+                    activePlayers.remove(0);
+                }
                 startActivity(intent);
                 finish();
             }
@@ -80,6 +93,7 @@ public class ShopActivity extends AppCompatActivity {
                 updateScore(score[0]);
             }
         });
+
 
         ImageView knight = findViewById(R.id.knight);
         knight.setOnClickListener(new View.OnClickListener() {
@@ -162,5 +176,24 @@ public class ShopActivity extends AppCompatActivity {
             }
         }
         return count;
+    }
+    public void startMusic(MediaPlayer music)
+    {
+        int index = (int) (Math.random()*(2));
+        Log.d("MUSIC INDEX",String.valueOf(index));
+        switch(index) {
+            case 0:
+                music = MediaPlayer.create(this, R.raw.shop_music_1);
+                break;
+            case 1:
+                music = MediaPlayer.create(this, R.raw.shop_music_2);
+                break;
+            case 2:
+                music = MediaPlayer.create(this, R.raw.shop_music_3);
+        }
+        music.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        music.setLooping(true);
+        activePlayers.add(music);
+        music.start();
     }
 }

@@ -190,9 +190,9 @@ public class Piece implements Serializable {
                 }
             }
         }
+        return unCheckedList;
 
-
-        List<Piece> pieceList = (this.team()) ? blackPieces : whitePieces;
+        /*List<Piece> pieceList = (this.team()) ? blackPieces : whitePieces;
 
 
         for (int i = 0; i < unCheckedList.size(); i++) // iterates through unchecked list for possible moves
@@ -232,10 +232,9 @@ public class Piece implements Serializable {
                 }
             }
 
-        }
+        }*/
         // iterate through all Pieces in Piece list and check to see which of the King's
         // possible moves are in those, if all of them ar
-        return movementList;
     }
 
     public boolean findKings(char[][] board) {
@@ -243,8 +242,6 @@ public class Piece implements Serializable {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (board[i][j] == king) {
-                    Log.d("X",String.valueOf(i));
-                    Log.d("X",String.valueOf(j));
                     return true;
                 }
             }
@@ -532,11 +529,6 @@ public class Piece implements Serializable {
     public void printMovelist(List<Piece> moveList) { //prints entire list
         for (int i = 0; i < moveList.size(); i++) {
             System.out.println(moveList.get(i));
-            Log.d("moveListX",String.valueOf(moveList.get(i).getPosX()));
-            Log.d("moveListY",String.valueOf(moveList.get(i).getPosY()));
-            Log.d("moveListPiece",String.valueOf(moveList.get(i).getPiece()));
-
-
         }
     }
 
@@ -574,7 +566,6 @@ public class Piece implements Serializable {
                 return true;
             } else {
                 // System.out.println("Invalid Move");
-               Log.d("578","FOUND YOUUUUU");
                 return false;
             }
         } else { //generic pieces
@@ -591,7 +582,7 @@ public class Piece implements Serializable {
                 }
                 return true;
             } else {
-                Log.d("589","FOUND YOUUUUU");
+
                 return false;
             }
         }
